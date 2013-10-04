@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html manifest="dashboard.appcache">
+    <head>
+        <meta charset="utf-8">
+
+        <title>Dashboard</title>
+
+        <script type="text/javascript" src="crowd-dashboard.js"></script>
+        <script type="text/javascript">
+            "use strict";
+
+            var statusDashboard;
+            window.onload = function() {
+                function loadDataForDashboard(fileURL,dashboard) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function() {
+                        if( xhr.readyState == 4 && xhr.status != 0 && xhr.status < 400 )
+                            dashboard.setServers(JSON.parse(xhr.response));
+                        else
+                            dashboard.setServers([]);
+                    };
+
+                    xhr.open('GET',fileURL);
+                    xhr.send();
+                }
+
+                statusDashboard = new Dashboard();
+                loadDataForDashboard("servers.json",statusDashboard);
+
+                // set up the mirrors list
+                var mirrorsDashboard = new Dashboard();
+                mirrorsDashboard.setTarget('mirrors');
+                mirrorsDashboard.onready = function() {
+                    if(mirrorsDashboard.count == 0)
+                        document.getElementById('mirrorsWrapper').classList.add('hidden');
+                };
+
+                loadDataForDashboard("mirrors.json",mirrorsDashboard);
+            };
+
+            function refresh(dashboard) {
+                dashboard.checkServers();
+            }
+        </script>
+
+        <style type="text/css">
+            .offline {
+                list-style-image: url('img/notok.png');
+            }
+            .online {
+                list-style-image: url('img/ok.png');
+            }
+            .hidden {
+                visibility: hidden;
+                display: none;
+            }
+
+            #mirrors ul, #mirrors ul li {
+                float: right;
+                list-style-type: none;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Dashboard</h1>
+        <button onclick="refresh(statusDashboard);">Refresh</button>
+        <div id="crowd-dashboard-status-list">
+        </div>
+        <footer>
+            <a href="http://github.com/freaktechnik/crowd-dashboard">on GitHub</a>
+            <span id="mirrorsWrapper">Mirrors: <div id="mirrors"></div></span>
+        </footer>
+    </body>
+</html>
