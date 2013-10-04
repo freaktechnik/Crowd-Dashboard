@@ -1,4 +1,10 @@
 <?php
+    /**
+     *  Crowd Dashboard detching script
+     *  Created by Martin Giger in 2013
+     *  Licensed under GPLv2
+     */
+
     // get: source with trailing /
 
     $c = curl_init();

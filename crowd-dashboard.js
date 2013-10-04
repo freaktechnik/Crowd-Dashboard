@@ -1,5 +1,9 @@
 /**
- * Credits for the status ping image hack idea to (even tough this might not be ther original source): http://jsfiddle.net/Maslow/GSSCD/
+ *  Crowd Dashboard Javascript
+ *  Created by Martin giger in 2013
+ *  Licensed under GPLv2
+ *  
+ *  Credits for the status ping image hack idea to (even tough this might not be ther original source): http://jsfiddle.net/Maslow/GSSCD/
  */
 
 "use strict";
