@@ -50,11 +50,22 @@
         </script>
 
         <style type="text/css">
-            .offline {
-                list-style-image: url('img/notok.png');
+            ul, ul li {
+                list-style-type: none;
+                margin-left: 0;
+                padding-left: 0;
             }
+        
+            .offline {
+                background-color: red;
+                color: white;
+            }
+            .offline a:link, .offline a:visited {
+                color: white;
+            }
+            
             .online {
-                list-style-image: url('img/ok.png');
+                // style for services that are alive
             }
             .hidden {
                 visibility: hidden;
@@ -63,7 +74,6 @@
 
             #mirrors ul, #mirrors ul li {
                 float: right;
-                list-style-type: none;
             }
         </style>
     </head>
