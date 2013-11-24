@@ -14,6 +14,7 @@ Dashboard.prototype.count = 0;
 Dashboard.prototype.ready = -1;
 Dashboard.prototype.onready = null;
 
+// constructs the dashboard, checks the servers if a server array is passed. Thesecond argument allows the Dashboard to be output to a specific element.
 function Dashboard(servers, elementId) {
     this.servers = new Array();
 
@@ -29,6 +30,7 @@ function Dashboard(servers, elementId) {
     }
 }
 
+// Sets the servers array and checks their status
 Dashboard.prototype.setServers = function(servers) {
     if( typeof servers == "object" && servers.length > 0 ) {
         this.servers = servers;
@@ -43,12 +45,14 @@ Dashboard.prototype.setServers = function(servers) {
 
 };
 
+// sets the output elements ID
 Dashboard.prototype.setTarget = function(elementId) {
     if( typeof elementId == "string" ) {
         this.elementId = elementId;
     }
 };
 
+// checks the status of all servers.
 Dashboard.prototype.checkServers = function() {
     // not too nice way to do it, but it does the job
     document.getElementById(this.elementId).innerHTML = 'Loading...';
@@ -78,30 +82,41 @@ Dashboard.prototype.checkServers = function() {
         img.src = url+rand;
     }
     
-    function getStatusAPI(url, callback) {
-        var urlObj = URL(url) || window.URL(url) || window.webkitURL(url),
-            rand = '?timestamp='+Date.now(),
-            funcName = 'processStatusAPI' + window.btoa(encodeURI(urlObj.hostname+rand)).replace(/[\/=]./,'');
-            
+    function getStatusAPI(url, callback, apiURL, propertyName, upValue) {
+        var urlObj = new URL(url) || window.URL(url) || window.webkitURL(url) || {"host":(/:\/\/([a-z0-9\.:].*)/).exec(url)[1]};
+    
+        // set default values
+        apiURL = apiURL || 'https://status.' + urlObj.host + '/api/status.json';
+        propertyName = propertyName || "status";
+        upValue = upValue || "good";
+        
+        var rand = (apiURL.contains('?')?'&':'?')+'timestamp='+Date.now(),
+            funcName = 'processStatusAPI' + window.btoa(encodeURI(urlObj.host+rand)).replace(/[\/=]./,'');
+        
+        apiURL += rand + '&callback=' + funcName;
+        
         window[funcName] = function(response) {
-            callback( url, response.status == "good", that );
+            callback( url, response[propertyName] == upValue, that );
         }
             
         var script = document.createElement("script");
-        script.src = 'https://status.' + urlObj.host + '/api/status.json' + rand + '&callback=' + funcName;
+        script.src = apiURL;
         document.body.appendChild(script);
     }
 
+    var pageObj;
     for( var serverList in this.servers ) {
         for( var page in this.servers[serverList].pages) {
-            if(!this.servers[serverList].pages[page].hasOwnProperty("hasStatusAPI") || !this.servers[serverList].pages[page].hasStatusAPI)
-                getStatus(this.servers[serverList].pages[page].url, this.addServerToList);
+            pageObj = this.servers[serverList].pages[page];
+            if(!pageObj.hasOwnProperty("hasStatusAPI") || !pageObj.hasStatusAPI)
+                getStatus(pageObj.url, this.addServerToList);
             else
-                getStatusAPI(this.servers[serverList].pages[page].url, this.addServerToList);
+                getStatusAPI(pageObj.url, this.addServerToList, pageObj.statusAPI.url, pageObj.statusAPI.propertyName, pageObj.statusAPI.upValue);
         }
     }
 };
 
+// adds a server to the internal status list and initiates markup generation when all servers have been checked
 Dashboard.prototype.addServerToList = function( url, online, that ) {
     var page;
     for( var serverList in that.servers ) {
@@ -123,10 +138,12 @@ Dashboard.prototype.addServerToList = function( url, online, that ) {
     }
 };
 
+// checks if all servers have been checked
 Dashboard.prototype.isReady = function() {
     return this.count == this.ready;
 };
 
+// clears the whole object
 Dashboard.prototype.clear = function() {
     this.servers = {};
     this.count = 0;
@@ -135,6 +152,7 @@ Dashboard.prototype.clear = function() {
     document.getElementById(this.elementId).innerHTML = '';
 };
 
+// outputs the markup list
 Dashboard.prototype.createLists = function() {
     var root = document.getElementById(this.elementId);
     var heading, list, item, link;
