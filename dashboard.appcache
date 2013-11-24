@@ -1,5 +1,12 @@
 CACHE MANIFEST
-
+# version 4
+CACHE:
 index.html
 crowd-dashboard.js
 servers.json
+
+NETWORK:
+*
+http://*
+https://*
+irc://*

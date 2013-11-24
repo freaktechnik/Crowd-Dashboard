@@ -83,7 +83,7 @@ Dashboard.prototype.checkServers = function() {
     }
     
     function getStatusAPI(url, callback, statusAPI) {
-        var urlObj = new URL(url) || window.URL(url) || window.webkitURL(url) || {"host":(/:\/\/([a-z0-9\.:].*)/).exec(url)[1]};
+        var urlObj = {"host":url.match(/:\/\/([a-z0-9\.:].*)/)[1]};
     
         // set default values
         statusAPI.url = statusAPI.url || 'https://status.' + urlObj.host + '/api/status.json';

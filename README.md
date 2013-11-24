@@ -4,6 +4,13 @@ Crowd Dashboard aims to provide an independent website status page. It uses a cl
 
 It uses simple JSON objects to create the lists.
 
+Compatibility
+=============
+Crowd-dashboard has been tested and is working in
+   * Firefox 25+
+   * Chrome 31
+   * Internet Explorer 10
+
 Mirroring
 =========
 As how the dashboard is set up in the repository, a similar one can be cloned by simply calling [fetch.php](fetch.php) with the correct arguments.
