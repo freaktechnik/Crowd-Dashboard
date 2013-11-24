@@ -14,7 +14,7 @@ Dashboard.prototype.count = 0;
 Dashboard.prototype.ready = -1;
 Dashboard.prototype.onready = null;
 
-// constructs the dashboard, checks the servers if a server array is passed. Thesecond argument allows the Dashboard to be output to a specific element.
+// constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
 function Dashboard(servers, elementId) {
     this.servers = new Array();
 
@@ -78,7 +78,7 @@ Dashboard.prototype.checkServers = function() {
                 callback( url, false, that );
         }, 5000);
 
-        var rand = (url.contains('?')?'&':'?')+'timestamp='+Date.now();
+        var rand = (url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now();
         img.src = url+rand;
     }
     
@@ -90,7 +90,7 @@ Dashboard.prototype.checkServers = function() {
         statusAPI.propertyName = statusAPI.propertyName || "status";
         statusAPI.upValue = statusAPI.upValue || "good";
         
-        var rand = (statusAPI.url.contains('?')?'&':'?')+'timestamp='+Date.now(),
+        var rand = (statusAPI.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now(),
             funcName = 'processStatusAPI' + window.btoa(encodeURI(urlObj.host+rand)).replace(/[\/=]./,'');
         
         statusAPI.url += rand + '&callback=' + funcName;
