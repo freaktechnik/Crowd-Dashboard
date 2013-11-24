@@ -88,6 +88,10 @@ isReady
 -------
 Is true if all servers have been checked.
 
+onready
+-------
+_onready_ is technically a property of the dashboard object. You can set it to get notified, when the statuses of all servers have been fetched, so it needs to be a function if set.
+
 [License](LICENSE)
 =======
 Crowd Dashboard is licensed under the GPLv2 License.

@@ -35,18 +35,19 @@
     $mirrors = curl_exec($d);
 
     if($mirrors === false) {
-        echo "Failed to fetch mirrors.json: ".curl_error($d);
+        echo "\nFailed to fetch mirrors.json: ".curl_error($d);
     }
     else {
         $json = json_decode($mirrors);
-        $json[0]->pages[sizeof($json[0]->pages)]->name = $_GET['source'];
-        $json[0]->pages[sizeof($json[0]->pages)]->url = $_GET['source'];
+        $index = sizeof($json[0]->pages);
+        $json[0]->pages[$index]->name = $_GET['source'];
+        $json[0]->pages[$index]->url = $_GET['source'];
 
-        $file = fopen("servers.json", 'w+');
-        fwrite( $file, json_encode($json) );
+        $file = fopen("mirrors.json", 'w+');
+        fwrite( $file, stripslashes(json_encode($json)) );
         fclose( $file );
 
-        echo "Sucessfully fetched mirrors.json from ".$_GET['source'];
+        echo "\nSucessfully fetched mirrors.json from ".$_GET['source'];
     }
 
     curl_close($d);

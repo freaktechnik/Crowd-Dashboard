@@ -22,7 +22,7 @@
                     xhr.onreadystatechange = function() {
                         if( xhr.readyState == 4 && xhr.status != 0 && xhr.status < 400 )
                             dashboard.setServers(JSON.parse(xhr.response));
-                        else
+                        else if( xhr.readyState == 4 )
                             dashboard.setServers([]);
                     };
 
@@ -37,6 +37,7 @@
                 var mirrorsDashboard = new Dashboard();
                 mirrorsDashboard.setTarget('mirrors');
                 mirrorsDashboard.onready = function() {
+                    console.log(mirrorsDashboard.count+" "+mirrorsDashboard.ready);
                     if(mirrorsDashboard.count == 0)
                         document.getElementById('mirrorsWrapper').classList.add('hidden');
                 };
@@ -74,6 +75,15 @@
 
             #mirrors ul, #mirrors ul li {
                 float: right;
+            }
+            
+            #mirrors h2 {
+                display: none;
+                visibility: hidden;
+            }
+            
+            #mirrorsWrapper {
+                display: inline
             }
         </style>
     </head>

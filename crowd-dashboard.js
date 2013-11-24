@@ -15,13 +15,13 @@ Dashboard.prototype.ready = -1;
 Dashboard.prototype.onready = null;
 
 // constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
-function Dashboard(servers, elementId) {
+function Dashboard(aServers, aElementId) {
     this.servers = new Array();
 
-    if( servers ) {
-        this.setServers( servers );
-        if( elementId ) {
-            this.setTarget( elementId );
+    if( aServers ) {
+        this.setServers( aServers );
+        if( aElementId ) {
+            this.setTarget( aElementId );
         }
 
         if(!this.isReady()) {
@@ -56,7 +56,6 @@ Dashboard.prototype.setTarget = function(elementId) {
 Dashboard.prototype.checkServers = function() {
     // not too nice way to do it, but it does the job
     document.getElementById(this.elementId).innerHTML = 'Loading...';
-    this.ready = 0;
 
     var that = this;
     function getStatus(url, callback) {
@@ -128,6 +127,8 @@ Dashboard.prototype.addServerToList = function( url, online, that ) {
             page = that.servers[serverList].pages[pageIndex];
             if(page.url == url) {
                 page.online = online;
+                if(that.ready == -1)
+                    that.ready = 0;
                 that.ready++;
                 break;
             }
