@@ -6,8 +6,6 @@
  *  Credits for the status ping image hack idea to (even tough this might not be ther original source): http://jsfiddle.net/Maslow/GSSCD/
  */
 
-"use strict";
-
 Dashboard.prototype.servers = [];
 Dashboard.prototype.elementId = "crowd-dashboard-status-list";
 Dashboard.prototype.count = 0;
@@ -108,8 +106,6 @@ Dashboard.prototype.checkServers = function() {
     for( var serverList in this.servers ) {
         for( var page in this.servers[serverList].pages) {
             pageObj = this.servers[serverList].pages[page];
-            if(!pageObj.statusAPI)
-                pageObj.statusAPI = {};
             
             if(!pageObj.hasOwnProperty("hasStatusAPI") || !pageObj.hasStatusAPI)
                 getStatus(pageObj.url, this.addServerToList);

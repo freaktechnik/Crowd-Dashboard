@@ -60,18 +60,18 @@ Set the servers list object.
 setTarget
 ---------
 Arguments:
-   * elementId, id of the lement the dashboard should be printed into
+   * elementId, id of the element the dashboard should be printed into
    
 Set the target element the dashboard is output into.
 
 checkServers
 ------------
-Refreshes the the statusses of the servers and updates the printed list.
+Refreshes the the statuses of the servers and updates the printed list.
 
 isReady
 -------
 Is true if all servers have been checked.
 
-License
+[License](LICENSE)
 =======
 Crowd Dashboard is licensed under the GPLv2 License.
