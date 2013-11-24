@@ -1,10 +1,13 @@
 CACHE MANIFEST
+# Crowd Dashboard Cache Manifest
+# Visit the GitHub project: http://freaktechnik.github.io/Crowd-Dashboard
 # version 4
 CACHE:
 index.html
 crowd-dashboard.js
 servers.json
 
+# Lots of wildcards, so statuses can be checked
 NETWORK:
 *
 http://*

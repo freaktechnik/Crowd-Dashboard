@@ -6,7 +6,7 @@ It uses simple JSON objects to create the lists.
 
 Compatibility
 =============
-Crowd-dashboard has been tested and is working in
+Crowd-Dashboard has been tested and is working in
    * Firefox 25+
    * Chrome 31
    * Internet Explorer 10
@@ -14,7 +14,7 @@ Crowd-dashboard has been tested and is working in
 Mirroring
 =========
 As how the dashboard is set up in the repository, a similar one can be cloned by simply calling [fetch.php](fetch.php) with the correct arguments.
-To do so, call `fetch.php?source=urlToOtherDashboard/`. This will fetch the other dashboards servwers.json and the mirrors.json and add the dashboard those are fetched from to the local list of mirrors.
+To do so, call `fetch.php?source=urlToOtherDashboard/`. This will fetch the other dashboard's servers.json and the mirrors.json and add expands the local mirrors list by the dashboard fetched from.
 
 After having used fetch.php please delete the file from the server.
 
@@ -52,11 +52,11 @@ Additionally, if the page provides an JSONP API to request it's status, you can 
 }
 ```
 
-Setting up your Dashboard
-=========================
+The JS Object
+=============
 For an example on how to make your dashboard work, see the [index.html](index.html) file.
 
-Basically the js API requires you to construct a Dashboard object, which offers the following methods:
+Basically the js API supplied by the [crowd-dashboard.js](crowd-dashboard.js) file requires you to construct a Dashboard object, which offers the following methods:
 
 Constructor
 -----------

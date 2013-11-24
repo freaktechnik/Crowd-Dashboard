@@ -1,9 +1,10 @@
 /**
  *  Crowd Dashboard Javascript
- *  Created by Martin giger in 2013
+ *  Created by Martin Giger in 2013
  *  Licensed under GPLv2
+ *  Visit the GitHub project: http://freaktechnik.github.io/Crowd-Dashboard
  *  
- *  Credits for the status ping image hack idea to (even tough this might not be ther original source): http://jsfiddle.net/Maslow/GSSCD/
+ *  Credits for the status ping image hack idea to (even tough this might not be the original source): http://jsfiddle.net/Maslow/GSSCD/
  */
  
 "use strict";
@@ -181,7 +182,7 @@ Dashboard.prototype.createLists = function() {
             item.appendChild(link);
 
             if(this.servers[serverList].withLocations) {
-                item.appendChild(document.createTextNode(this.locationConnector);
+                item.appendChild(document.createTextNode(this.locationConnector));
                 link = document.createElement('a');
                 link.classList.add('dashboard-location');
                 link.href = this.locationURL + this.servers[serverList].pages[page].location;
