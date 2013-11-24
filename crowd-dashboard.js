@@ -80,25 +80,25 @@ Dashboard.prototype.checkServers = function() {
         img.src = url+rand;
     }
     
-    function getStatusAPI(url, callback, apiURL, propertyName, upValue) {
+    function getStatusAPI(url, callback, statusAPI) {
         var urlObj = new URL(url) || window.URL(url) || window.webkitURL(url) || {"host":(/:\/\/([a-z0-9\.:].*)/).exec(url)[1]};
     
         // set default values
-        apiURL = apiURL || 'https://status.' + urlObj.host + '/api/status.json';
-        propertyName = propertyName || "status";
-        upValue = upValue || "good";
+        statusAPI.url = statusAPI.url || 'https://status.' + urlObj.host + '/api/status.json';
+        statusAPI.propertyName = statusAPI.propertyName || "status";
+        statusAPI.upValue = statusAPI.upValue || "good";
         
-        var rand = (apiURL.contains('?')?'&':'?')+'timestamp='+Date.now(),
+        var rand = (statusAPI.url.contains('?')?'&':'?')+'timestamp='+Date.now(),
             funcName = 'processStatusAPI' + window.btoa(encodeURI(urlObj.host+rand)).replace(/[\/=]./,'');
         
-        apiURL += rand + '&callback=' + funcName;
+        statusAPI.url += rand + '&callback=' + funcName;
         
         window[funcName] = function(response) {
-            callback( url, response[propertyName] == upValue, that );
+            callback( url, response[statusAPI.propertyName] == statusAPI.upValue, that );
         }
             
         var script = document.createElement("script");
-        script.src = apiURL;
+        script.src = statusAPI.url;
         document.body.appendChild(script);
     }
 
@@ -106,11 +106,14 @@ Dashboard.prototype.checkServers = function() {
     for( var serverList in this.servers ) {
         for( var page in this.servers[serverList].pages) {
             pageObj = this.servers[serverList].pages[page];
+            // for the strictness
+            if(!pageObj.statusAPI)
+                pageObj.statusAPI = {};
             
             if(!pageObj.hasOwnProperty("hasStatusAPI") || !pageObj.hasStatusAPI)
                 getStatus(pageObj.url, this.addServerToList);
             else
-                getStatusAPI(pageObj.url, this.addServerToList, pageObj.statusAPI.url, pageObj.statusAPI.propertyName, pageObj.statusAPI.upValue);
+                getStatusAPI(pageObj.url, this.addServerToList, pageObj.statusAPI);
         }
     }
 };
