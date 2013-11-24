@@ -37,7 +37,6 @@
                 var mirrorsDashboard = new Dashboard();
                 mirrorsDashboard.setTarget('mirrors');
                 mirrorsDashboard.onready = function() {
-                    console.log(mirrorsDashboard.count+" "+mirrorsDashboard.ready);
                     if(mirrorsDashboard.count == 0)
                         document.getElementById('mirrorsWrapper').classList.add('hidden');
                 };
@@ -82,8 +81,8 @@
                 visibility: hidden;
             }
             
-            #mirrorsWrapper {
-                display: inline
+            #mirrors {
+                display: inline;
             }
         </style>
     </head>
