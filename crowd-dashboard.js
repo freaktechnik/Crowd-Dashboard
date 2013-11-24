@@ -5,6 +5,8 @@
  *  
  *  Credits for the status ping image hack idea to (even tough this might not be ther original source): http://jsfiddle.net/Maslow/GSSCD/
  */
+ 
+"use strict";
 
 Dashboard.prototype.servers = [];
 Dashboard.prototype.elementId = "crowd-dashboard-status-list";

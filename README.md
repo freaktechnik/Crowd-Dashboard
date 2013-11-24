@@ -4,6 +4,15 @@ Crowd Dashboard aims to provide an independent website status page. It uses a cl
 
 It uses simple JSON objects to create the lists.
 
+Mirroring
+=========
+As how the dashboard is set up in the repository, a similar one can be cloned by simply calling [fetch.php](fetch.php) with the correct arguments.
+To do so, call `fetch.php?source=urlToOtherDashboard/`. This will fetch the other dashboards servwers.json and the mirrors.json and add the dashboard those are fetched from to the local list of mirrors.
+
+After having used fetch.php please delete the file from the server.
+
+The mirroring list only goes one way, so mirrored dashboards only have the mirrors from the dashboard, but the mirrored dashboard does not know that it has been mirrored. This will probably stay so, since spammers could simply mass-insert links otherwise.
+
 List Format
 ===========
 The list is a simple JSON file, on the top level it is an array.
