@@ -17,7 +17,8 @@ The array contains serve groups, which are built like this:
         ]
 }
 ```
-In the 'pages' array, the objects for the pages are stored. If 'withLocations' is true, the page objects need a value in the 'location' object.
+The _name_ property will be printed as a h2 header-element.
+In the _pages_ array, the objects for the pages are stored. If _withLocations_ is true, the page objects need a value in the _location_ object.
 ```js
 {
     "name":"Page Name",
@@ -26,12 +27,12 @@ In the 'pages' array, the objects for the pages are stored. If 'withLocations' i
 }
 ```
 
-Additionally, if the page provides an API to request it's status, you can set the 'hasStatusAPI' property to true. You most likely will have to define a 'pageAPI' object, the one shown in the example holds the default values, where page.host represents the host of the URL set in the page object.
+Additionally, if the page provides an API to request it's status, you can set the _hasStatusAPI_ property to true. You most likely will have to define a _pageAPI_ object, the one shown in the example holds the default values, where page.host represents the host of the URL set in the page object.
 ```js
-'pageAPI':{
-    'url':'httpw://status.page.host/api/status.json',
-    'propertyName':'status',
-    'upValue':'good'
+"pageAPI":{
+    "url":"https://status.page.host/api/status.json",
+    "propertyName":"status",
+    "upValue":"good"
 }
 ```
 
