@@ -36,8 +36,8 @@
                 // set up the mirrors list
                 var mirrorsDashboard = new Dashboard();
                 mirrorsDashboard.setTarget('mirrors');
-                mirrorsDashboard.onready = function() {
-                    if(mirrorsDashboard.count == 0)
+                mirrorsDashboard.onready = function(dashboard) {
+                    if(dashboard.count == 0)
                         document.getElementById('mirrorsWrapper').classList.add('hidden');
                 };
 
@@ -50,7 +50,7 @@
         </script>
 
         <style type="text/css">
-            ul, ul li {
+            .dashborad-list, .dashboar-list li {
                 list-style-type: none;
                 margin-left: 0;
                 padding-left: 0;
@@ -72,7 +72,7 @@
                 display: none;
             }
 
-            #mirrors ul, #mirrors ul li {
+            #mirrors .dashboard-list, #mirrors .dashboard-list li {
                 float: right;
             }
             

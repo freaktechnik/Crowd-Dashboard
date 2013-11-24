@@ -13,15 +13,16 @@ Dashboard.prototype.elementId = "crowd-dashboard-status-list";
 Dashboard.prototype.count = 0;
 Dashboard.prototype.ready = -1;
 Dashboard.prototype.onready = null;
+Dashboard.prototype.locationConnector = " in ";
+Dashboard.prototype.locationURL = "http://maps.google.com/?q=";
+Dashboard.prototype.loadingString = "Loading...";
 
 // constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
-function Dashboard(aServers, aElementId) {
-    this.servers = new Array();
-
-    if( aServers ) {
-        this.setServers( aServers );
-        if( aElementId ) {
-            this.setTarget( aElementId );
+function Dashboard(servers, elementId) {
+    if( servers ) {
+        this.setServers( servers );
+        if( elementId ) {
+            this.setTarget( elementId );
         }
 
         if(!this.isReady()) {
@@ -41,7 +42,7 @@ Dashboard.prototype.setServers = function(servers) {
         this.checkServers();
     }
     else if( typeof this.onready == "function" && this.onready != null )
-        this.onready();
+        this.onready(this);
 
 };
 
@@ -55,7 +56,7 @@ Dashboard.prototype.setTarget = function(elementId) {
 // checks the status of all servers.
 Dashboard.prototype.checkServers = function() {
     // not too nice way to do it, but it does the job
-    document.getElementById(this.elementId).innerHTML = 'Loading...';
+    document.getElementById(this.elementId).innerHTML = this.loadingString;
 
     var that = this;
     function getStatus(url, callback) {
@@ -112,15 +113,15 @@ Dashboard.prototype.checkServers = function() {
                 pageObj.statusAPI = {};
             
             if(!pageObj.hasOwnProperty("hasStatusAPI") || !pageObj.hasStatusAPI)
-                getStatus(pageObj.url, this.addServerToList);
+                getStatus(pageObj.url, addServerToList);
             else
-                getStatusAPI(pageObj.url, this.addServerToList, pageObj.statusAPI);
+                getStatusAPI(pageObj.url, addServerToList, pageObj.statusAPI);
         }
     }
 };
 
 // adds a server to the internal status list and initiates markup generation when all servers have been checked
-Dashboard.prototype.addServerToList = function( url, online, that ) {
+function addServerToList( url, online, that ) {
     var page;
     for( var serverList in that.servers ) {
         for( var pageIndex in that.servers[serverList].pages) {
@@ -139,9 +140,9 @@ Dashboard.prototype.addServerToList = function( url, online, that ) {
         document.getElementById(that.elementId).innerHTML = '';
         that.createLists();
         if( typeof that.onready == "function" && that.onready != null )
-            that.onready();
+            that.onready(that);
     }
-};
+}
 
 // checks if all servers have been checked
 Dashboard.prototype.isReady = function() {
@@ -163,23 +164,33 @@ Dashboard.prototype.createLists = function() {
     var heading, list, item, link;
     for(var serverList in this.servers) {
         heading = document.createElement('h2');
+        heading.classList.add('dashboard-title');
         heading.appendChild(document.createTextNode(this.servers[serverList].name));
+
         list = document.createElement('ul');
+        list.classList.add('dashborad-list')
+        if(this.servers[serverList].withLocations)
+            list.classList.add('dashborad-with-locations');
+
         for(var page in this.servers[serverList].pages) {
             item = document.createElement('li');
+
             link = document.createElement('a');
             link.href = this.servers[serverList].pages[page].url;
             link.appendChild(document.createTextNode(this.servers[serverList].pages[page].name));
             item.appendChild(link);
+
             if(this.servers[serverList].withLocations) {
-                item.appendChild(document.createTextNode(" in "));
+                item.appendChild(document.createTextNode(this.locationConnector);
                 link = document.createElement('a');
                 link.classList.add('dashboard-location');
-                link.href = 'http://maps.google.com/?q='+this.servers[serverList].pages[page].location;
+                link.href = this.locationURL + this.servers[serverList].pages[page].location;
                 link.appendChild(document.createTextNode(this.servers[serverList].pages[page].location));
                 item.appendChild(link);
             }
+
             item.classList.add(this.servers[serverList].pages[page].online?'online':'offline');
+
             list.appendChild(item);
         }
         root.appendChild(heading);
