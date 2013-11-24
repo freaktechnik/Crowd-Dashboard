@@ -108,6 +108,9 @@ Dashboard.prototype.checkServers = function() {
     for( var serverList in this.servers ) {
         for( var page in this.servers[serverList].pages) {
             pageObj = this.servers[serverList].pages[page];
+            if(!pageObj.statusAPI)
+                pageObj.statusAPI = {};
+            
             if(!pageObj.hasOwnProperty("hasStatusAPI") || !pageObj.hasStatusAPI)
                 getStatus(pageObj.url, this.addServerToList);
             else

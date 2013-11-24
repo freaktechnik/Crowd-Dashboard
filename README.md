@@ -36,6 +36,42 @@ Additionally, if the page provides an API to request it's status, you can set th
 }
 ```
 
+Setting up your Dashboard
+=========================
+For an example on how to make your dashboard work, see the [index.html](index.html) file.
+
+Basically the js API requires you to construct a Dashboard object, which offers the following methods:
+
+Constructor
+-----------
+Arguments:
+   * servers, JSON server list
+   * elementId, id of the element the dashboard should be printed into
+   
+Already tries to create the dashboard, if a valid servers list is given.
+  
+setServers
+----------
+Arguments:
+   * servers, JSON server list
+
+Set the servers list object.
+
+setTarget
+---------
+Arguments:
+   * elementId, id of the lement the dashboard should be printed into
+   
+Set the target element the dashboard is output into.
+
+checkServers
+------------
+Refreshes the the statusses of the servers and updates the printed list.
+
+isReady
+-------
+Is true if all servers have been checked.
+
 License
 =======
 Crowd Dashboard is licensed under the GPLv2 License.
