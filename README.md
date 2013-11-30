@@ -1,18 +1,15 @@
-Crowd-Dashboard
-===============
+# Crowd-Dashboard
 Crowd Dashboard aims to provide an independent website status page. It uses a client side js library to detect the online status of servers. After the first load, it can be stored on the users computer, so the original server doesn't need to be working anymore and the dashboard still works.
 
 It uses simple JSON objects to create the lists.
 
-Compatibility
-=============
+## Compatibility
 Crowd-Dashboard has been tested and is working in
    * Firefox 25+
    * Chrome 31
    * Internet Explorer 10
 
-Mirroring
-=========
+## Mirroring
 As how the dashboard is set up in the repository, a similar one can be cloned by simply calling [fetch.php](fetch.php) with the correct arguments.
 To do so, call `fetch.php?source=urlToOtherDashboard/`. This will fetch the other dashboard's servers.json and the mirrors.json and add expands the local mirrors list by the dashboard fetched from.
 
@@ -20,8 +17,7 @@ After having used fetch.php please delete the file from the server.
 
 The mirroring list only goes one way, so mirrored dashboards only have the mirrors from the dashboard, but the mirrored dashboard does not know that it has been mirrored. This will probably stay so, since spammers could simply mass-insert links otherwise.
 
-List Format
-===========
+## List Format
 The list is a simple JSON file, on the top level it is an array.
 The array contains serve groups, which are built like this:
 ```js
@@ -52,94 +48,78 @@ Additionally, if the page provides an JSONP API to request it's status, you can 
 }
 ```
 
-The JS Object
-=============
+## The JS Object
 For an example on how to make your dashboard work, see the [index.html](index.html) file.
 
 Basically the js API supplied by the [crowd-dashboard.js](crowd-dashboard.js) file requires you to construct a Dashboard object, which offers the following methods:
 
-Constructor
------------
-Arguments:
+### Methods
+#### Constructor
+##### Arguments
    * servers, JSON server list
    * elementId, id of the element the dashboard should be printed into
    
+##### Description
 Already tries to create the dashboard, if a valid servers list is given.
   
-setServers
-----------
-Arguments:
+#### setServers
+##### Arguments
    * servers, JSON server list
 
+##### Description
 Set the servers list object.
 
-setTarget
----------
-Arguments:
+#### setTarget
+##### Arguments
    * elementId, id of the element the dashboard should be printed into
-   
+
+##### Description
 Set the target element the dashboard is output into.
 
-checkServers
-------------
+#### checkServers
 Refreshes the the statuses of the servers and updates the printed list.
 
-isReady
--------
+#### isReady
 Is true if all servers have been checked.
 
-clear
------
+#### clear
 Resets the Dashboard object. Also clears the status list.
 
-createLists
------------
+#### createLists
 Appends the dashboard's lists to the target element.
 
-Attributes
-----------
-  count
-  -----
-  Number of servers to check. Defaults to 0.
+### Attributes
+#### count
+Number of servers to check. Defaults to 0.
 
-  ready
-  -----
-  Number of checked servers. Defaults to -1.
+#### ready
+Number of checked servers. Defaults to -1.
 
-  servers
-  -------
-  The servers list, with an additional _online_ attribute, if the server has been checked. Holds true, if the server is online.
+#### servers
+The servers list, with an additional _online_ attribute, if the server has been checked. Holds true, if the server is online.
 
-  locationConnector
-  -----------------
-  The string between the link to the page and the location link. Sanitized by the browser, so no html in there! Defaults to " in ".
+#### locationConnector
+The string between the link to the page and the location link. Sanitized by the browser, so no html in there! Defaults to " in ".
 
-  locationURL
-  -----------
-  The URL the location gets linked to. The location string is appended after this string. Defaults to "http://maps.google.com/?q=".
+#### locationURL
+The URL the location gets linked to. The location string is appended after this string. Defaults to "http://maps.google.com/?q=".
 
-  loadingString
-  -------------
-  The string displayed inside the container while loading the dashboard. This currently isn't sanitized and just inserted into the _innerHTML_ property of the target element. Defaults to "Loading...".
+#### loadingString
+The string displayed inside the container while loading the dashboard. This currently isn't sanitized and just inserted into the _innerHTML_ property of the target element. Defaults to "Loading...".
   
-Events
-------
+### Events
 Those won't work in IE.
 
-ready
------
+#### ready
 This event is dispatched when all servers have been checked and are ready.
-Event Object Attributes:
+##### Event Object Attributes
    * _length_: Number of servers in the list
    * _ready_: Number of servers ready
 
-empty
------
+#### empty
 Whenever the list is emptied (by either clearing it or handing over an empty server list), this event is fired.
 
-Output Markup structure
-=======================
-
+## Output Markup structure
 The code generated by the script in the targeted element has the following structure:
 ```html
 <h2 class="dashboard-title">Server List Name</h2>
@@ -153,6 +133,5 @@ The code generated by the script in the targeted element has the following struc
 </ul>
 ```
 
-[License](LICENSE)
-=======
+## [License](LICENSE)
 Crowd Dashboard is licensed under the GPLv2 License.
