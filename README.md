@@ -98,10 +98,6 @@ Appends the dashboard's lists to the target element.
 
 Attributes
 ----------
-  onready
-  -------
-  _onready_ is technically a property of the dashboard object. You can set it to get notified, when the statuses of all servers have been fetched, so it needs to be a function if set. Or if an empty server list is being set. As first argument a reference to the Dashboard object is passed. Defaults to  null.
-
   count
   -----
   Number of servers to check. Defaults to 0.
@@ -125,6 +121,21 @@ Attributes
   loadingString
   -------------
   The string displayed inside the container while loading the dashboard. This currently isn't sanitized and just inserted into the _innerHTML_ property of the target element. Defaults to "Loading...".
+  
+Events
+------
+Those won't work in IE.
+
+ready
+-----
+This event is dispatched when all servers have been checked and are ready.
+Event Object Attributes:
+   * _length_: Number of servers in the list
+   * _ready_: Number of servers ready
+
+empty
+-----
+Whenever the list is emptied (by either clearing it or handing over an empty server list), this event is fired.
 
 Output Markup structure
 =======================

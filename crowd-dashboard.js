@@ -13,7 +13,6 @@ Dashboard.prototype.servers = [];
 Dashboard.prototype.elementId = "crowd-dashboard-status-list";
 Dashboard.prototype.count = 0;
 Dashboard.prototype.ready = -1;
-Dashboard.prototype.onready = null;
 Dashboard.prototype.locationConnector = " in ";
 Dashboard.prototype.locationURL = "http://maps.google.com/?q=";
 Dashboard.prototype.loadingString = "Loading...";
@@ -42,8 +41,8 @@ Dashboard.prototype.setServers = function(servers) {
 
         this.checkServers();
     }
-    else if( typeof this.onready == "function" && this.onready != null )
-        this.onready(this);
+    else
+        this.onempty();
 
 };
 
@@ -140,8 +139,7 @@ function addServerToList( url, online, that ) {
     if(that.isReady()) {
         document.getElementById(that.elementId).innerHTML = '';
         that.createLists();
-        if( typeof that.onready == "function" && that.onready != null )
-            that.onready(that);
+        that.onready();
     }
 }
 
@@ -157,6 +155,8 @@ Dashboard.prototype.clear = function() {
     this.ready = -1;
     // not too nice way to do it, but it does the job
     document.getElementById(this.elementId).innerHTML = '';
+    
+    this.onempty();
 };
 
 // outputs the markup list
@@ -197,4 +197,16 @@ Dashboard.prototype.createLists = function() {
         root.appendChild(heading);
         root.appendChild(list);
     }
+};
+
+Dashboard.prototype.onready = function() {
+    var event = new Event('ready',{'length':this.count,'ready':this.ready});
+    
+    this.dispatchEvent(event);
+};
+
+Dashboard.prototype.onempty = function() {
+    var event = new Event('empty');
+    
+    this.dispatchEvent(event);
 };

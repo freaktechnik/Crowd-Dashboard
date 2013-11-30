@@ -37,9 +37,8 @@
                 // set up the mirrors list
                 var mirrorsDashboard = new Dashboard();
                 mirrorsDashboard.setTarget('mirrors');
-                mirrorsDashboard.onready = function(dashboard) {
-                    if(dashboard.count == 0)
-                        document.getElementById('mirrorsWrapper').classList.add('hidden');
+                mirrorsDashboard.addEventListener('empty',function(event) {
+                    document.getElementById('mirrorsWrapper').classList.add('hidden');
                 };
 
                 loadDataForDashboard("mirrors.json",mirrorsDashboard);
