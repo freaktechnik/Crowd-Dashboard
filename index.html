@@ -39,7 +39,7 @@
                 mirrorsDashboard.setTarget('mirrors');
                 mirrorsDashboard.addEventListener('empty',function(event) {
                     document.getElementById('mirrorsWrapper').classList.add('hidden');
-                };
+                });
 
                 loadDataForDashboard("mirrors.json",mirrorsDashboard);
             };
