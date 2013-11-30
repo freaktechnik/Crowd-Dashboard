@@ -48,7 +48,7 @@ Additionally, if the page provides an JSONP API to request it's status, you can 
 "pageAPI":{
     "url":"https://status.page.host/api/status.json",
     "propertyName":"status",
-    "upValue":"good"
+    "downValue":"major"
 }
 ```
 

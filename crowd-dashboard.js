@@ -89,7 +89,7 @@ Dashboard.prototype.checkServers = function() {
         // set default values
         statusAPI.url = statusAPI.url || 'https://status.' + urlObj.host + '/api/status.json';
         statusAPI.propertyName = statusAPI.propertyName || "status";
-        statusAPI.upValue = statusAPI.upValue || "good";
+        statusAPI.downValue = statusAPI.downValue || "major";
         
         var rand = (statusAPI.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now(),
             funcName = 'processStatusAPI' + window.btoa(encodeURI(urlObj.host+rand)).replace(/[\/=]./,'');
@@ -97,7 +97,7 @@ Dashboard.prototype.checkServers = function() {
         statusAPI.url += rand + '&callback=' + funcName;
         
         window[funcName] = function(response) {
-            callback( url, response[statusAPI.propertyName] == statusAPI.upValue, that );
+            callback( url, response[statusAPI.propertyName] != statusAPI.downValue, that );
         }
             
         var script = document.createElement("script");
