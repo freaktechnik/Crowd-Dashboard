@@ -33,7 +33,7 @@ function Dashboard(servers, elementId) {
     // Events setup
     this.eventListeners = {};
     
-    var that;
+    var that = this;
     Object.defineProperty(this,'onready',{
         get: function() {
                 return function() {
@@ -46,7 +46,7 @@ function Dashboard(servers, elementId) {
             }
     });
     
-    Object.definePropterty(this,'onempty',{
+    Object.defineProperty(this,'onempty',{
         get: function() {
                 return function() {
                     var event = new Event('empty');
