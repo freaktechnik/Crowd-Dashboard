@@ -11,7 +11,7 @@ Crowd-Dashboard has been tested and is working in
 
 ## Mirroring
 As how the dashboard is set up in the repository, a similar one can be cloned by simply calling [fetch.php](fetch.php) with the correct arguments.
-To do so, call `fetch.php?source=urlToOtherDashboard/`. This will fetch the other dashboard's servers.json and the mirrors.json and add expands the local mirrors list by the dashboard fetched from.
+To do so, call `fetch.php?source=urlToOtherDashboard/`. This will fetch the other dashboard's servers.json and the mirrors.json and expands the local mirrors list by the dashboard fetched from.
 
 After having used fetch.php please delete the file from the server.
 

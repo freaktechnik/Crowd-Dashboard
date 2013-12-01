@@ -210,3 +210,5 @@ Dashboard.prototype.onempty = function() {
     
     this.dispatchEvent(event);
 };
+
+//toDo: add event adding/removing/dispatching
