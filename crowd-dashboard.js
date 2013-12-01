@@ -256,7 +256,7 @@ Dashboard.prototype.removeEventListener = function(type, fn) {
 };
 
 Dashboard.prototype.dispatchEvent = function(d_eventObject) {
-    if( this.eventListeners[d_eventObject.type] && this.eventListeners[d_eventObject.type].length > 0 ) {}
+    if( this.eventListeners[d_eventObject.type] && this.eventListeners[d_eventObject.type].length > 0 ) {
         for(var listener in this.eventListeners[d_eventObject.type]) {
             this.eventListeners[d_eventObject.type][listener](d_eventObject);
         }
