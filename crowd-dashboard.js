@@ -205,7 +205,7 @@ Dashboard.prototype.createLists = function() {
 };
 
 Dashboard.prototype.onready = function() {
-    var event = new Event('ready',{'length':this.count,'ready':this.ready});
+    var event = new CustomEvent('ready',{'length':this.count,'ready':this.ready});
     
     this.dispatchEvent(event);
 };
@@ -242,8 +242,10 @@ Dashboard.prototype.removeEventListener = function(type, fn) {
 };
 
 Dashboard.prototype.dispatchEvent = function(d_eventObject) {
-    for(var listener in this.eventListeners[d_eventObject.type]) {
-        this.eventListeners[d_eventObject.type][listener](d_eventObject);
+    if( this.eventListeners[d_eventObject.type] && this.eventListeners[d_eventObject.type].length > 0 ) {}
+        for(var listener in this.eventListeners[d_eventObject.type]) {
+            this.eventListeners[d_eventObject.type][listener](d_eventObject);
+        }
     }
 };
  
