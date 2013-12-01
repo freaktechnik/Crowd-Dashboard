@@ -66,8 +66,15 @@ Dashboard.prototype.setServers = function(servers) {
         for( var serverList in this.servers ) {
             this.count += this.servers[serverList].pages.length;
         }
-
-        this.checkServers();
+        
+        // check if the lists actually contained pages
+        if( this.count > 0 ) {
+            this.checkServers();
+        }
+        else
+        {
+            this.onempty();
+        }
     }
     else {
         this.servers.length = 0;
