@@ -19,6 +19,8 @@ Dashboard.prototype.loadingString = "Loading...";
 
 // constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
 function Dashboard(servers, elementId) {
+    this.eventListeners = {};
+
     if( servers ) {
         this.setServers( servers );
         if( elementId ) {
@@ -41,8 +43,10 @@ Dashboard.prototype.setServers = function(servers) {
 
         this.checkServers();
     }
-    else
+    else {
+        this.servers.length = 0;
         this.onempty();
+    }
 
 };
 
@@ -150,11 +154,12 @@ Dashboard.prototype.isReady = function() {
 
 // clears the whole object
 Dashboard.prototype.clear = function() {
-    this.servers = {};
+    this.servers.length = 0;
     this.count = 0;
     this.ready = -1;
     // not too nice way to do it, but it does the job
     document.getElementById(this.elementId).innerHTML = '';
+    this.eventListeners = {};
     
     this.onempty();
 };
@@ -211,4 +216,34 @@ Dashboard.prototype.onempty = function() {
     this.dispatchEvent(event);
 };
 
-//toDo: add event adding/removing/dispatching
+/**
+ *  Simple event listener/sender pattern
+ *  this does not support propagation control (bubbling/preventingDefault etc.)
+ */
+
+Dashboard.prototype.eventListeners = {};
+
+Dashboard.prototype.addEventListener = function(type, fn) {
+    if( !this.eventListeners[type] )
+        this.eventListeners[type] = new Array();
+
+    this.eventListeners[type].push(fn);
+};
+
+Dashboard.prototype.removeEventListener = function(type, fn) {
+    for(var listener in this.eventListeners[type]) {
+        if( this.eventListeners[type][listener] == fn )
+            this.eventListeners[type].splice(listener,1);
+    }
+    
+    if( this.eventListeners[type].length == 0 ) {
+        delete this.eventListeners[type];
+    }
+};
+
+Dashboard.prototype.dispatchEvent = function(d_eventObject) {
+    for(var listener in this.eventListeners[d_eventObject.type]) {
+        this.eventListeners[d_eventObject.type][listener](d_eventObject);
+    }
+};
+ 
