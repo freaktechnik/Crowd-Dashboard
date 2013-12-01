@@ -19,8 +19,6 @@ Dashboard.prototype.loadingString = "Loading...";
 
 // constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
 function Dashboard(servers, elementId) {
-    this.eventListeners = {};
-
     if( servers ) {
         this.setServers( servers );
         if( elementId ) {
@@ -31,6 +29,34 @@ function Dashboard(servers, elementId) {
             this.checkServers();
         }
     }
+    
+    // Events setup
+    this.eventListeners = {};
+    
+    var that;
+    Object.defineProperty(this,'onready',{
+        get: function() {
+                return function() {
+                    var event = new CustomEvent('ready',{'length':that.count,'ready':that.ready});
+                    that.dispatchEvent(event);
+                };
+            },
+        set: function(fn) {
+                that.addEventListener('ready',fn);
+            }
+    });
+    
+    Object.definePropterty(this,'onempty',{
+        get: function() {
+                return function() {
+                    var event = new Event('empty');
+                    that.dispatchEvent(event);
+                };
+            },
+        set: function(fn) {
+                that.addEventListener('empty',fn);
+            }
+    });
 }
 
 // Sets the servers array and checks their status
@@ -202,18 +228,6 @@ Dashboard.prototype.createLists = function() {
         root.appendChild(heading);
         root.appendChild(list);
     }
-};
-
-Dashboard.prototype.onready = function() {
-    var event = new CustomEvent('ready',{'length':this.count,'ready':this.ready});
-    
-    this.dispatchEvent(event);
-};
-
-Dashboard.prototype.onempty = function() {
-    var event = new Event('empty');
-    
-    this.dispatchEvent(event);
 };
 
 /**
