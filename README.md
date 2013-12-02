@@ -51,6 +51,10 @@ Additionally, if the page provides an JSONP API to request it's status, you can 
 ## The JS Object
 For an example on how to make your dashboard work, see the [index.html](index.html) file.
 
+```js
+  var dashboard = new Dashboard();
+```
+
 Basically the js API supplied by the [crowd-dashboard.js](crowd-dashboard.js) file requires you to construct a Dashboard object, which offers the following methods:
 
 ### Methods
