@@ -65,20 +65,6 @@ Basically the js API supplied by the [crowd-dashboard.js](crowd-dashboard.js) fi
    
 ##### Description
 Already tries to create the dashboard, if a valid servers list is given.
-  
-#### setServers
-##### Arguments
-   * servers, JSON server list
-
-##### Description
-Set the servers list object.
-
-#### setTarget
-##### Arguments
-   * elementId, id of the element the dashboard should be printed into
-
-##### Description
-Set the target element the dashboard is output into.
 
 #### checkServers
 Refreshes the the statuses of the servers and updates the printed list.
@@ -110,6 +96,12 @@ The URL the location gets linked to. The location string is appended after this 
 
 #### loadingString
 The string displayed inside the container while loading the dashboard. This currently isn't sanitized and just inserted into the _innerHTML_ property of the target element. Defaults to "Loading...".
+
+#### targetNodeId
+The ID of the node the dashboard is output to.
+
+#### supportedEvents
+An array of the events it supports.
   
 ### Events
 Those won't work in IE. You can use the default _addEventListener_ and _removeEventListener_ methods to add and remove event listeners, however only the first two arguments will be processed. You can also add listeners by setting the _on[event]_ attribute.

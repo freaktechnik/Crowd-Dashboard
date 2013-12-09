@@ -9,32 +9,40 @@
  
 "use strict";
 
-Dashboard.prototype.servers = [];
-Dashboard.prototype.elementId = "crowd-dashboard-status-list";
 Dashboard.prototype.count = 0;
 Dashboard.prototype.ready = -1;
 Dashboard.prototype.locationConnector = " in ";
 Dashboard.prototype.locationURL = "http://maps.google.com/?q=";
 Dashboard.prototype.loadingString = "Loading...";
+Dashboard.prototype.supportedEvents = ['ready', 'empty'];
 
-// constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
+/*
+// Cinstructor
+   constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
+*/
 function Dashboard(servers, elementId) {
     if( servers ) {
-        this.setServers( servers );
+        this.servers = servers;
         if( elementId ) {
-            this.setTarget( elementId );
+            this.targetNodeId = elementId;
         }
 
         if(!this.isReady()) {
             this.checkServers();
         }
     }
-    
+
     // Events setup
     this.eventListeners = {};
+
+/*
+// Properties with getters & setters
+*/
     
     var that = this;
-    Object.defineProperty(this,'onready',{
+
+    // make this automated with the supported Events list
+    Object.defineProperty(this, 'onready', {
         get: function() {
                 return function() {
                     var event = new CustomEvent('ready',{'length':that.count,'ready':that.ready});
@@ -46,7 +54,7 @@ function Dashboard(servers, elementId) {
             }
     });
     
-    Object.defineProperty(this,'onempty',{
+    Object.defineProperty(this, 'onempty', {
         get: function() {
                 return function() {
                     var event = new Event('empty');
@@ -57,43 +65,57 @@ function Dashboard(servers, elementId) {
                 that.addEventListener('empty',fn);
             }
     });
+
+    var pServers = new Array();
+    Object.defineProperty(this, 'servers', {
+        set: function(servers) {
+                if( typeof servers == "object" && servers.length > 0 ) {
+                    pServers = servers;
+                    for( var serverList in pServers ) {
+                        that.count += pServers[serverList].pages.length;
+                    }
+                    
+                    // check if the lists actually contained pages
+                    if( that.count > 0 ) {
+                        that.checkServers();
+                    }
+                    else
+                    {
+                        that.onempty();
+                    }
+                }
+                else {
+                    pServers.length = 0;
+                    that.onempty();
+                }
+
+            },
+        get: function() {
+                return pServers;
+            }
+    });
+
+    var elementId = "crowd-dashboard-status-list";
+    Object.defineProperty(this, 'targetNodeId', {
+        set: function(val) {
+                if( typeof val == "string" ) {
+                    elementId = val;
+                }
+            },
+        get: function() {
+                return elementId;
+            }
+    });
 }
 
-// Sets the servers array and checks their status
-Dashboard.prototype.setServers = function(servers) {
-    if( typeof servers == "object" && servers.length > 0 ) {
-        this.servers = servers;
-        for( var serverList in this.servers ) {
-            this.count += this.servers[serverList].pages.length;
-        }
-        
-        // check if the lists actually contained pages
-        if( this.count > 0 ) {
-            this.checkServers();
-        }
-        else
-        {
-            this.onempty();
-        }
-    }
-    else {
-        this.servers.length = 0;
-        this.onempty();
-    }
-
-};
-
-// sets the output elements ID
-Dashboard.prototype.setTarget = function(elementId) {
-    if( typeof elementId == "string" ) {
-        this.elementId = elementId;
-    }
-};
+/*
+// Methods
+*/
 
 // checks the status of all servers.
 Dashboard.prototype.checkServers = function() {
     // not too nice way to do it, but it does the job
-    document.getElementById(this.elementId).innerHTML = this.loadingString;
+    document.getElementById(this.targetNodeId).innerHTML = this.loadingString;
 
     var that = this;
     function getStatus(url, callback) {
@@ -174,7 +196,7 @@ function addServerToList( url, online, that ) {
     }
 
     if(that.isReady()) {
-        document.getElementById(that.elementId).innerHTML = '';
+        document.getElementById(that.targetNodeId).innerHTML = '';
         that.createLists();
         that.onready();
     }
@@ -191,7 +213,7 @@ Dashboard.prototype.clear = function() {
     this.count = 0;
     this.ready = -1;
     // not too nice way to do it, but it does the job
-    document.getElementById(this.elementId).innerHTML = '';
+    document.getElementById(this.targetNodeId).innerHTML = '';
     this.eventListeners = {};
     
     this.onempty();
@@ -199,7 +221,7 @@ Dashboard.prototype.clear = function() {
 
 // outputs the markup list
 Dashboard.prototype.createLists = function() {
-    var root = document.getElementById(this.elementId);
+    var root = document.getElementById(this.targetNodeId);
     var heading, list, item, link;
     for(var serverList in this.servers) {
         heading = document.createElement('h2');
@@ -245,6 +267,7 @@ Dashboard.prototype.createLists = function() {
 Dashboard.prototype.eventListeners = {};
 
 Dashboard.prototype.addEventListener = function(type, fn) {
+    // construct the array for this eventtype, if it's not yet existing.
     if( !this.eventListeners[type] )
         this.eventListeners[type] = new Array();
 
@@ -257,6 +280,7 @@ Dashboard.prototype.removeEventListener = function(type, fn) {
             this.eventListeners[type].splice(listener,1);
     }
     
+    // delete the eventtype property if there are no more listeners.
     if( this.eventListeners[type].length == 0 ) {
         delete this.eventListeners[type];
     }
