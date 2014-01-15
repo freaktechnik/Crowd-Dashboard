@@ -10,8 +10,8 @@
  
 "use strict";
 
-Dashboard.prototype.count = 0;
-Dashboard.prototype.ready = -1;
+Dashboard.prototype.totalCount = 0;
+Dashboard.prototype.readyCount = -1;
 Dashboard.prototype.locationConnector = " in ";
 Dashboard.prototype.locationURL = "http://maps.google.com/?q=";
 Dashboard.prototype.loadingString = "Loading...";
@@ -51,7 +51,7 @@ function Dashboard(servers, passive, elementId) {
     Object.defineProperty(this, 'onready', {
         get: function() {
                 return function(event) {
-                    event = event && event.type == "ready" ? event : new CustomEvent('ready',{'length':that.count,'ready':that.ready});
+                    event = event && event.type == "ready" ? event : new CustomEvent('ready',{'length':that.totalCount,'ready':that.readyCount});
                     that.dispatchEvent(event);
                 };
             },
@@ -77,13 +77,13 @@ function Dashboard(servers, passive, elementId) {
         set: function(servers) {
                 if( typeof servers == "object" && servers.length > 0 ) {
                     pServers = servers;
-                    that.count = 0;
+                    that.totalCount = 0;
                     pServers.forEach(function(serverList) {
-                        this.count += serverList.pages.length;
+                        this.totalCount += serverList.pages.length;
                     }, that);
                     
                     // check if the lists actually contained pages
-                    if( that.count > 0 ) {
+                    if( that.totalCount > 0 ) {
                         that.checkServers();
                     }
                     else
@@ -192,15 +192,15 @@ Dashboard.prototype.addServerToList = function( url, online ) {
         serverList.pages.forEach(function(page) {
             if(page.url == url) {
                 page.online = online;
-                if(this.ready == -1)
-                    this.ready = 0;
-                this.ready++;
+                if(this.readyCount == -1)
+                    this.readyCount = 0;
+                this.readyCount++;
             }
         }, this);
     }, this);
 
     if(this.isReady()) {
-        var e = new CustomEvent('ready',{'length':this.count});
+        var e = new CustomEvent('ready',{'length':this.totalCount});
         this.onready(e);
 
         if(!e.defaultPrevented && !this.passiveMode) {
@@ -212,14 +212,14 @@ Dashboard.prototype.addServerToList = function( url, online ) {
 
 // checks if all servers have been checked
 Dashboard.prototype.isReady = function() {
-    return this.count == this.ready;
+    return this.totalCount == this.readyCount;
 };
 
 // clears the whole object
 Dashboard.prototype.clear = function() {
     this.servers.length = 0;
-    this.count = 0;
-    this.ready = -1;
+    this.totalCount = 0;
+    this.readyCount = -1;
 
     // not too nice way to do it, but it does the job
     if(!this.passiveMode)

@@ -88,10 +88,10 @@ Resets the Dashboard object. Also clears the status list.
 Appends the dashboard's lists to the target element.
 
 ### Attributes
-#### count
+#### totalCount
 Number of servers to check. Defaults to 0.
 
-#### ready
+#### readyCount
 Number of checked servers. Defaults to -1.
 
 #### servers
