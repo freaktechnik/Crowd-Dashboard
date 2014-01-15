@@ -19,7 +19,7 @@ The mirroring list only goes one way, so mirrored dashboards only have the mirro
 
 ## List Format
 The list is a simple JSON file, on the top level it is an array.
-The array contains serve groups, which are built like this:
+The array contains server groups, which are built like this:
 ```js
 {
     "name":"Group Name",
@@ -39,7 +39,7 @@ In the _pages_ array, the objects for the pages are stored. If _withLocations_ i
 }
 ```
 
-Additionally, if the page provides an JSONP API to request it's status, you can set the _hasStatusAPI_ property to true. You most likely will have to define a _pageAPI_ object, the one shown in the example holds the default values, where page.host represents the host of the URL set in the page object.
+Additionally, if the page provides a JSONP API to request it's status, you can set the _hasStatusAPI_ property to true. You most likely will have to define a _pageAPI_ object, the one shown in the example holds the default values, where page.host represents the host of the URL set in the page object.
 ```js
 "pageAPI":{
     "url":"https://status.page.host/api/status.json",
@@ -60,9 +60,9 @@ Basically the js API supplied by the [crowd-dashboard.js](crowd-dashboard.js) fi
 ### Methods
 #### Constructor
 ##### Arguments
-   * servers, JSON server list
-   * passiveMode, false for generation of DOM list
-   * elementId, id of the element the dashboard should be printed into
+   * _servers_: JSON server list
+   * _passiveMode_: false for generation of DOM list
+   * _elementId_: id of the element the dashboard should be printed into
    
 ##### Description
 Already tries to create the dashboard, if a valid servers list is given.
@@ -72,8 +72,8 @@ Refreshes the the statuses of the servers and updates the printed list.
 
 #### addServerToList
 ##### Arguments
-   * url, the URL of the server
-   * status, whether or not the server is online
+   * _url_: the URL of the server
+   * _status_: whether or not the server is online
 
 ##### Description
 Sets the state of a server in the list.
