@@ -167,7 +167,7 @@ Dashboard.prototype.checkServers = function() {
         var script = document.createElement("script");
 
         window[funcName] = function(response) {
-            document.body.removeChild(script;)
+            document.body.removeChild(script);
             callback.call( that, url, response[statusAPI.propertyName] != statusAPI.downValue );
         }
             
@@ -191,7 +191,8 @@ Dashboard.prototype.checkServers = function() {
 };
 
 // adds a server to the internal status list and initiates markup generation when all servers have been checked
-Dashboard.prototype.addServerToList( url, online ) {
+Dashboard.prototype.addServerToList = function( url, online ) {
+    // make this more efficient. This is currently fully iterating through two dimensions of an array.
     this.servers.forEach(function(serverList) {
         serverList.pages.forEach(function(page) {
             if(page.url == url) {
@@ -199,7 +200,6 @@ Dashboard.prototype.addServerToList( url, online ) {
                 if(this.ready == -1)
                     this.ready = 0;
                 this.ready++;
-                break;
             }
         }, this);
     }, this);
@@ -213,7 +213,7 @@ Dashboard.prototype.addServerToList( url, online ) {
             this.createLists();
         }
     }
-}
+};
 
 // checks if all servers have been checked
 Dashboard.prototype.isReady = function() {

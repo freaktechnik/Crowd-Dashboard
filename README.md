@@ -139,4 +139,4 @@ Note that the generation of this code and the loading indicator can be prevented
 Crowd Dashboard is licensed under the GPLv2 License.
 
 ## Pull Requests
-If you fork this repository and make changes, please, please file a pull request to merge your improvements and fixes back into this repo. I will most likely merge it back in here (can't promise it, I don't want any chunk here...).
+If you fork this repository and make changes, please, please file a pull request to merge your improvements and fixes back into this repo. I will most likely merge it back in here (can't promise it, I don't want any junk here...).

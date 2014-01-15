@@ -22,9 +22,9 @@
                     var xhr = new XMLHttpRequest();
                     xhr.onreadystatechange = function() {
                         if( xhr.readyState == 4 && xhr.status != 0 && xhr.status < 400 )
-                            dashboard.setServers(JSON.parse(xhr.response));
-                        else if( xhr.readyState == 4 )
-                            dashboard.setServers([]);
+                            dashboard.servers = JSON.parse(xhr.response);
+                        //else if( xhr.readyState == 4 )
+                        //    dashboard.servers = [];
                     };
 
                     xhr.open('GET',fileURL);
@@ -32,16 +32,16 @@
                 }
 
                 statusDashboard = new Dashboard();
-                loadDataForDashboard("servers.json",statusDashboard);
+                loadDataForDashboard("json/servers.json",statusDashboard);
 
                 // set up the mirrors list
                 var mirrorsDashboard = new Dashboard();
-                mirrorsDashboard.setTarget('mirrors');
+                mirrorsDashboard.targetNodeId = 'mirrors';
                 mirrorsDashboard.addEventListener('empty',function(event) {
                     document.getElementById('mirrorsWrapper').classList.add('hidden');
                 });
 
-                loadDataForDashboard("mirrors.json",mirrorsDashboard);
+                loadDataForDashboard("json/mirrors.json",mirrorsDashboard);
             };
 
             function refresh(dashboard) {
