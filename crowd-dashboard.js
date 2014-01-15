@@ -3,6 +3,7 @@
  *  Created by Martin Giger in 2013
  *  Licensed under GPLv2
  *  Visit the GitHub project: http://freaktechnik.github.io/Crowd-Dashboard
+ *  Version 1.1
  *  
  *  Credits for the status ping image hack idea to (even tough this might not be the original source): http://jsfiddle.net/Maslow/GSSCD/
  */
@@ -44,8 +45,8 @@ function Dashboard(servers, elementId) {
     // make this automated with the supported Events list
     Object.defineProperty(this, 'onready', {
         get: function() {
-                return function() {
-                    var event = new CustomEvent('ready',{'length':that.count,'ready':that.ready});
+                return function(event) {
+                    event = event && event.type == "ready" ? event : new CustomEvent('ready',{'length':that.count,'ready':that.ready});
                     that.dispatchEvent(event);
                 };
             },
@@ -56,8 +57,8 @@ function Dashboard(servers, elementId) {
     
     Object.defineProperty(this, 'onempty', {
         get: function() {
-                return function() {
-                    var event = new Event('empty');
+                return function(event) {
+                    event = event && event.type == "empty" ? event : new Event('empty');
                     that.dispatchEvent(event);
                 };
             },
@@ -71,9 +72,10 @@ function Dashboard(servers, elementId) {
         set: function(servers) {
                 if( typeof servers == "object" && servers.length > 0 ) {
                     pServers = servers;
-                    for( var serverList in pServers ) {
-                        that.count += pServers[serverList].pages.length;
-                    }
+                    that.count = 0;
+                    pServers.forEach(function(serverList) {
+                        this.count += serverList.pages.length;
+                    }, that);
                     
                     // check if the lists actually contained pages
                     if( that.count > 0 ) {
@@ -81,6 +83,7 @@ function Dashboard(servers, elementId) {
                     }
                     else
                     {
+                        pServers.length = 0;
                         that.onempty();
                     }
                 }
@@ -123,18 +126,18 @@ Dashboard.prototype.checkServers = function() {
         var done = false;
 
         img.onload = function() {
-            callback( url, true, that );
+            callback.call( that, url, true );
             done=true;
         };
         img.onerror = function(e) {
             //x-origin/no image
-            callback( url, true, that );
+            callback.call( that, url, true );
             done=true;
         };
 
         setTimeout(function() {
             if(!done)
-                callback( url, false, that );
+                callback.call( that, url, false );
         }, 5000);
 
         var rand = (url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now();
@@ -149,13 +152,14 @@ Dashboard.prototype.checkServers = function() {
         statusAPI.propertyName = statusAPI.propertyName || "status";
         statusAPI.downValue = statusAPI.downValue || "major";
         
+        // timestamp to avoid caching
         var rand = (statusAPI.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now(),
             funcName = 'processStatusAPI' + window.btoa(encodeURI(urlObj.host+rand)).replace(/[\/=]./,'');
         
         statusAPI.url += rand + '&callback=' + funcName;
         
         window[funcName] = function(response) {
-            callback( url, response[statusAPI.propertyName] != statusAPI.downValue, that );
+            callback.call( that, url, response[statusAPI.propertyName] != statusAPI.downValue );
         }
             
         var script = document.createElement("script");
@@ -164,41 +168,42 @@ Dashboard.prototype.checkServers = function() {
     }
 
     var pageObj;
-    for( var serverList in this.servers ) {
-        for( var page in this.servers[serverList].pages) {
-            pageObj = this.servers[serverList].pages[page];
+    this.servers.forEach(function(serverList) {
+        serverList.pages.forEach(function(pageObj) {
             // for the strictness
             if(!pageObj.statusAPI)
                 pageObj.statusAPI = {};
             
             if(!pageObj.hasOwnProperty("hasStatusAPI") || !pageObj.hasStatusAPI)
-                getStatus(pageObj.url, addServerToList);
+                getStatus(pageObj.url, this.addServerToList);
             else
-                getStatusAPI(pageObj.url, addServerToList, pageObj.statusAPI);
-        }
-    }
+                getStatusAPI(pageObj.url, this.addServerToList, pageObj.statusAPI);
+        }, this);
+    }, this);
 };
 
 // adds a server to the internal status list and initiates markup generation when all servers have been checked
-function addServerToList( url, online, that ) {
-    var page;
-    for( var serverList in that.servers ) {
-        for( var pageIndex in that.servers[serverList].pages) {
-            page = that.servers[serverList].pages[pageIndex];
+Dashboard.prototype.addServerToList( url, online ) {
+    this.servers.forEach(function(serverList) {
+        serverList.pages.forEach(function(page) {
             if(page.url == url) {
                 page.online = online;
-                if(that.ready == -1)
-                    that.ready = 0;
-                that.ready++;
+                if(this.ready == -1)
+                    this.ready = 0;
+                this.ready++;
                 break;
             }
-        }
-    }
+        }, this);
+    }, this);
 
-    if(that.isReady()) {
-        document.getElementById(that.targetNodeId).innerHTML = '';
-        that.createLists();
-        that.onready();
+    if(this.isReady()) {
+        var e = new CustomEvent('ready',{'length':this.count,'ready':this.ready});
+        this.onready(e);
+
+        if(!e.defaultPrevented) {
+            document.getElementById(this.targetNodeId).innerHTML = '';
+            this.createLists();
+        }
     }
 }
 
@@ -214,49 +219,49 @@ Dashboard.prototype.clear = function() {
     this.ready = -1;
     // not too nice way to do it, but it does the job
     document.getElementById(this.targetNodeId).innerHTML = '';
-    this.eventListeners = {};
-    
+
     this.onempty();
+    this.eventListeners = {};
 };
 
 // outputs the markup list
 Dashboard.prototype.createLists = function() {
     var root = document.getElementById(this.targetNodeId);
     var heading, list, item, link;
-    for(var serverList in this.servers) {
+    this.servers.forEach(function(serverList) {
         heading = document.createElement('h2');
         heading.classList.add('dashboard-title');
-        heading.appendChild(document.createTextNode(this.servers[serverList].name));
+        heading.appendChild(document.createTextNode(serverList.name));
 
         list = document.createElement('ul');
         list.classList.add('dashborad-list')
-        if(this.servers[serverList].withLocations)
+        if(serverList.withLocations)
             list.classList.add('dashborad-with-locations');
 
-        for(var page in this.servers[serverList].pages) {
+        serverList.pages.forEach(function(page) {
             item = document.createElement('li');
 
             link = document.createElement('a');
-            link.href = this.servers[serverList].pages[page].url;
-            link.appendChild(document.createTextNode(this.servers[serverList].pages[page].name));
+            link.href = page.url;
+            link.appendChild(document.createTextNode(page.name));
             item.appendChild(link);
 
-            if(this.servers[serverList].withLocations) {
+            if(serverList.withLocations) {
                 item.appendChild(document.createTextNode(this.locationConnector));
                 link = document.createElement('a');
                 link.classList.add('dashboard-location');
-                link.href = this.locationURL + this.servers[serverList].pages[page].location;
-                link.appendChild(document.createTextNode(this.servers[serverList].pages[page].location));
+                link.href = this.locationURL + page.location;
+                link.appendChild(document.createTextNode(page.location));
                 item.appendChild(link);
             }
 
-            item.classList.add(this.servers[serverList].pages[page].online?'online':'offline');
+            item.classList.add(page.online?'online':'offline');
 
             list.appendChild(item);
-        }
+        }, this);
         root.appendChild(heading);
         root.appendChild(list);
-    }
+    }, this);
 };
 
 /**
@@ -288,9 +293,9 @@ Dashboard.prototype.removeEventListener = function(type, fn) {
 
 Dashboard.prototype.dispatchEvent = function(d_eventObject) {
     if( this.eventListeners[d_eventObject.type] && this.eventListeners[d_eventObject.type].length > 0 ) {
-        for(var listener in this.eventListeners[d_eventObject.type]) {
-            this.eventListeners[d_eventObject.type][listener](d_eventObject);
-        }
+        this.eventListeners[d_eventObject.type].forEach(function(listener) {
+            listener(d_eventObject);
+        });
     }
 };
  
