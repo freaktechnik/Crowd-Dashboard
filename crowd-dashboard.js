@@ -16,14 +16,19 @@ Dashboard.prototype.locationConnector = " in ";
 Dashboard.prototype.locationURL = "http://maps.google.com/?q=";
 Dashboard.prototype.loadingString = "Loading...";
 Dashboard.prototype.supportedEvents = ['ready', 'empty'];
+Dashboard.prototype.passiveMode = false;
 
 /*
 // Cinstructor
    constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
 */
-function Dashboard(servers, elementId) {
+function Dashboard(servers, passive, elementId) {
     if( servers ) {
         this.servers = servers;
+
+        if(passive != null)
+            this.passiveMode = passive;
+
         if( elementId ) {
             this.targetNodeId = elementId;
         }
@@ -118,7 +123,8 @@ function Dashboard(servers, elementId) {
 // checks the status of all servers.
 Dashboard.prototype.checkServers = function() {
     // not too nice way to do it, but it does the job
-    document.getElementById(this.targetNodeId).innerHTML = this.loadingString;
+    if(!this.passiveMode)
+        document.getElementById(this.targetNodeId).innerHTML = this.loadingString;
 
     var that = this;
     function getStatus(url, callback) {
@@ -158,11 +164,13 @@ Dashboard.prototype.checkServers = function() {
         
         statusAPI.url += rand + '&callback=' + funcName;
         
+        var script = document.createElement("script");
+
         window[funcName] = function(response) {
+            document.body.removeChild(script;)
             callback.call( that, url, response[statusAPI.propertyName] != statusAPI.downValue );
         }
             
-        var script = document.createElement("script");
         script.src = statusAPI.url;
         document.body.appendChild(script);
     }
@@ -200,7 +208,7 @@ Dashboard.prototype.addServerToList( url, online ) {
         var e = new CustomEvent('ready',{'length':this.count,'ready':this.ready});
         this.onready(e);
 
-        if(!e.defaultPrevented) {
+        if(!e.defaultPrevented && !this.passiveMode) {
             document.getElementById(this.targetNodeId).innerHTML = '';
             this.createLists();
         }
@@ -217,8 +225,10 @@ Dashboard.prototype.clear = function() {
     this.servers.length = 0;
     this.count = 0;
     this.ready = -1;
+
     // not too nice way to do it, but it does the job
-    document.getElementById(this.targetNodeId).innerHTML = '';
+    if(!this.passiveMode)
+        document.getElementById(this.targetNodeId).innerHTML = '';
 
     this.onempty();
     this.eventListeners = {};
