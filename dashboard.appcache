@@ -5,7 +5,7 @@ CACHE MANIFEST
 CACHE:
 index.html
 crowd-dashboard.js
-servers.json
+json/servers.json
 
 # Lots of wildcards, so statuses can be checked
 NETWORK:
