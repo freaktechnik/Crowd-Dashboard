@@ -234,9 +234,9 @@ Dashboard.prototype.createLists = function() {
         heading.appendChild(document.createTextNode(serverList.name));
 
         list = document.createElement('ul');
-        list.classList.add('dashborad-list')
+        list.classList.add('dashboard-list')
         if(serverList.withLocations)
-            list.classList.add('dashborad-with-locations');
+            list.classList.add('dashboard-with-locations');
 
         serverList.pages.forEach(function(page) {
             item = document.createElement('li');
