@@ -175,17 +175,12 @@ Dashboard.prototype.checkServers = function() {
         document.body.appendChild(script);
     }
 
-    var pageObj;
     this.servers.forEach(function(serverList) {
-        serverList.pages.forEach(function(pageObj) {
-            // for the strictness
-            if(!pageObj.statusAPI)
-                pageObj.statusAPI = {};
-            
-            if(!pageObj.hasOwnProperty("hasStatusAPI") || !pageObj.hasStatusAPI)
-                getStatus(pageObj.url, this.addServerToList);
-            else
+        serverList.pages.forEach(function(pageObj) {            
+            if(pageObj.hasOwnProperty("hasStatusAPI") && pageObj.hasStatusAPI)
                 getStatusAPI(pageObj.url, this.addServerToList, pageObj.statusAPI);
+            else
+                getStatus(pageObj.url, this.addServerToList);
         }, this);
     }, this);
 };
@@ -205,7 +200,7 @@ Dashboard.prototype.addServerToList = function( url, online ) {
     }, this);
 
     if(this.isReady()) {
-        var e = new CustomEvent('ready',{'length':this.count,'ready':this.ready});
+        var e = new CustomEvent('ready',{'length':this.count});
         this.onready(e);
 
         if(!e.defaultPrevented && !this.passiveMode) {

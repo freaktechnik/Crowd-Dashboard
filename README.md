@@ -113,8 +113,7 @@ Those won't work in IE. You can use the default _addEventListener_ and _removeEv
 #### ready
 This event is dispatched when all servers have been checked and are ready. This event can be prevented to avoid generation of the markup.
 ##### Event Object Attributes
-   * _length_: Number of servers in the list
-   * _ready_: Number of servers ready
+   * _length_: Number of servers
 
 #### empty
 Whenever the list is emptied (by either clearing it or handing over an empty server list), this event is fired.
