@@ -70,6 +70,14 @@ Already tries to create the dashboard, if a valid servers list is given.
 #### checkServers
 Refreshes the the statuses of the servers and updates the printed list.
 
+#### addServerToList
+##### Arguments
+   * url, the URL of the server
+   * status, whether or not the server is online
+
+##### Description
+Sets the state of a server in the list.
+
 #### isReady
 Is true if all servers have been checked.
 
