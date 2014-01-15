@@ -126,6 +126,8 @@ Dashboard.prototype.checkServers = function() {
     if(!this.passiveMode)
         document.getElementById(this.targetNodeId).innerHTML = this.loadingString;
 
+    this.readyCount = 0;
+
     var that = this;
     function getStatus(url, callback) {
         var img = new Image();
@@ -203,6 +205,9 @@ Dashboard.prototype.addServerToList = function( url, online ) {
 
     if(this.isReady()) {
         var e = new CustomEvent('ready',{'length':this.totalCount});
+        e.preventDefault = function() {
+            e.defaultPrevented = true;
+        };
         this.onready(e);
 
         if(!e.defaultPrevented && !this.passiveMode) {
