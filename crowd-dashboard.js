@@ -52,7 +52,7 @@ function Dashboard(servers, passive, elementId) {
         get: function() {
                 return function(event) {
                     event = event && event.type == "ready" ? event : 
-                        new CustomEvent('ready',{'cancelable':true,'detail:'{'length':that.totalCount,'ready':that.readyCount}});
+                        new CustomEvent('ready',{'cancelable':true,'detail':{'length':that.totalCount,'ready':that.readyCount}});
                     that.dispatchEvent(event);
                 };
             },
