@@ -129,6 +129,20 @@ Dashboard.prototype.checkServers = function() {
 
     this.readyCount = 0;
 
+    this.servers.forEach(function(serverList) {
+        serverList.pages.forEach(function(pageObj) {            
+            this.checkServer(pageObj);
+        }, this);
+    }, this);
+};
+
+// eventually use url as ID here too?
+Dashboard.prototype.checkServer = function(pageObj) {
+    if(pageObj.hasOwnProperty("hasStatusAPI") && pageObj.hasStatusAPI)
+        getStatusAPI(pageObj.url, this.addServerToList, pageObj.statusAPI);
+    else
+        getStatus(pageObj.url, this.addServerToList);
+
     var that = this;
     function getStatus(url, callback) {
         var img = new Image();
@@ -179,40 +193,44 @@ Dashboard.prototype.checkServers = function() {
         script.src = statusAPI.url;
         document.body.appendChild(script);
     }
-
-    this.servers.forEach(function(serverList) {
-        serverList.pages.forEach(function(pageObj) {            
-            if(pageObj.hasOwnProperty("hasStatusAPI") && pageObj.hasStatusAPI)
-                getStatusAPI(pageObj.url, this.addServerToList, pageObj.statusAPI);
-            else
-                getStatus(pageObj.url, this.addServerToList);
-        }, this);
-    }, this);
 };
 
 // adds a server to the internal status list and initiates markup generation when all servers have been checked
 Dashboard.prototype.addServerToList = function( url, online ) {
     // make this more efficient. This is currently fully iterating through two dimensions of an array.
-    this.servers.forEach(function(serverList) {
-        serverList.pages.forEach(function(page) {
-            if(page.url == url) {
-                page.online = online;
-                if(this.readyCount == -1)
-                    this.readyCount = 0;
-                this.readyCount++;
+    
+    var server = this.getServerByURL(url);
+    if(server) {
+        server.online = online;
+        if(this.readyCount == -1)
+            this.readyCount = 0;
+        this.readyCount++;
+    
+        if(this.isReady()) {
+            var e = new CustomEvent('ready',{'cancelable':true,'detail':{'length':this.totalCount}});
+            this.onready(e);
+
+            if(!e.defaultPrevented && !this.passiveMode) {
+                document.getElementById(this.targetNodeId).innerHTML = '';
+                this.createLists();
             }
+        }
+    }
+};
+
+// make this more efficient than O(n*n)
+Dashboard.prototype.getServerByURL = function(url) {
+    var servObj= false;
+
+    this.servers.forEach(function(serverList) {
+        serverList.pages.forEach(function(server) {
+            if(server.url == url) {
+                servObj = server;
+            }            
         }, this);
     }, this);
 
-    if(this.isReady()) {
-        var e = new CustomEvent('ready',{'cancelable':true,'detail':{'length':this.totalCount}});
-        this.onready(e);
-
-        if(!e.defaultPrevented && !this.passiveMode) {
-            document.getElementById(this.targetNodeId).innerHTML = '';
-            this.createLists();
-        }
-    }
+    return servObj;
 };
 
 // checks if all servers have been checked

@@ -70,6 +70,13 @@ Already tries to create the dashboard, if a valid servers list is given.
 #### checkServers
 Refreshes the the statuses of the servers and updates the printed list.
 
+#### checkServer
+##### Arguments
+   * _server_: A page object. _Note: expect this to change to URL_
+
+##### Description
+Checks the status of a single server and saves it. If it was the last server to be ready, the ready event is fired.
+
 #### addServerToList
 ##### Arguments
    * _url_: the URL of the server
@@ -77,6 +84,13 @@ Refreshes the the statuses of the servers and updates the printed list.
 
 ##### Description
 Sets the state of a server in the list.
+
+#### getServerByURL
+##### Arguments
+   * _url_: URL of the server
+
+##### Description
+Returns the page object with the specified URL.
 
 #### isReady
 Is true if all servers have been checked.
