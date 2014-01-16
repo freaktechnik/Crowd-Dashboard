@@ -51,7 +51,8 @@ function Dashboard(servers, passive, elementId) {
     Object.defineProperty(this, 'onready', {
         get: function() {
                 return function(event) {
-                    event = event && event.type == "ready" ? event : new CustomEvent('ready',{'length':that.totalCount,'ready':that.readyCount});
+                    event = event && event.type == "ready" ? event : 
+                        new CustomEvent('ready',{'cancelable':true,'detail:'{'length':that.totalCount,'ready':that.readyCount}});
                     that.dispatchEvent(event);
                 };
             },
@@ -204,10 +205,7 @@ Dashboard.prototype.addServerToList = function( url, online ) {
     }, this);
 
     if(this.isReady()) {
-        var e = new CustomEvent('ready',{'length':this.totalCount});
-        e.preventDefault = function() {
-            e.defaultPrevented = true;
-        };
+        var e = new CustomEvent('ready',{'cancelable':true,'detail':{'length':this.totalCount}});
         this.onready(e);
 
         if(!e.defaultPrevented && !this.passiveMode) {

@@ -120,7 +120,7 @@ Those won't work in IE. You can use the default _addEventListener_ and _removeEv
 
 #### ready
 This event is dispatched when all servers have been checked and are ready. This event can be prevented to avoid generation of the markup.
-##### Event Object Attributes
+##### Event Object Details Attributes
    * _length_: Number of servers
 
 #### empty
