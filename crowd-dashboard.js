@@ -3,7 +3,7 @@
  *  Created by Martin Giger in 2013
  *  Licensed under GPLv2
  *  Visit the GitHub project: http://freaktechnik.github.io/Crowd-Dashboard
- *  Version 1.1
+ *  Version 1.1.0
  *  
  *  Credits for the status ping image hack idea to (even tough this might not be the original source): http://jsfiddle.net/Maslow/GSSCD/
  */
