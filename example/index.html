@@ -12,6 +12,8 @@
 
         <title>Dashboard</title>
 
+        <link rel="stylesheet" type="text/css" href="style.css">
+
         <script type="text/javascript" src="../crowd-dashboard.js"></script>
         <script type="text/javascript">
             "use strict";
@@ -48,44 +50,14 @@
                 dashboard.checkServers();
             }
         </script>
-
-        <style type="text/css">
-            .dashborad-list, .dashboar-list li {
-                list-style-type: none;
-                margin-left: 0;
-                padding-left: 0;
-            }
-        
-            .offline {
-                background-color: red;
-                color: white;
-            }
-            .offline a:link, .offline a:visited {
-                color: white;
-            }
-            
-            .online {
-                // style for services that are alive
-            }
-            .hidden, #mirrors h2 {
-                visibility: hidden;
-                display: none;
-            }
-
-            #mirrors .dashboard-list, #mirrors .dashboard-list li {
-                float: right;
-            }
-            
-            #mirrors {
-                display: inline;
-            }
-        </style>
     </head>
     <body>
-        <h1>Dashboard</h1>
-        <button onclick="refresh(statusDashboard);">Refresh</button>
-        <div id="crowd-dashboard-status-list">
-        </div>
+        <article>
+            <h1>Dashboard</h1>
+            <button onclick="refresh(statusDashboard);">Refresh</button>
+            <div id="crowd-dashboard-status-list">
+            </div>
+        </article>
         <footer>
             <a href="https://github.com/freaktechnik/Crowd-Dashboard">Source on GitHub</a>
             <section id="mirrorsWrapper">Mirrors: <div id="mirrors"></div></section>

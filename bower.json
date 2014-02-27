@@ -1,6 +1,6 @@
 {
 	"name": "Crowd-Dashboard",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "Check online statuses of webservices using an adaptive JS object.",
 	"keywords":
 	[
@@ -19,7 +19,8 @@
 	"main": "./crowd-dashboard.js",
 	"ignore":
 	[
-		"example/*"
+		"example/*",
+		"index.html"
 	],
 	"repository":
 	{

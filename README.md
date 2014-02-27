@@ -10,7 +10,7 @@ Crowd-Dashboard has been tested and is working in
    * Internet Explorer 10
 
 ## Mirroring
-As how the dashboard is set up in the repository, a similar one can be cloned by simply calling [fetch.php](fetch.php) with the correct arguments.
+As how the dashboard is set up in the repository, a similar one can be cloned by simply calling [fetch.php](example/fetch.php) with the correct arguments.
 To do so, call `fetch.php?source=urlToOtherDashboard/`. This will fetch the other dashboard's servers.json and the mirrors.json and expands the local mirrors list by the dashboard fetched from.
 
 After having used fetch.php please delete the file from the server.
@@ -30,12 +30,13 @@ The array contains server groups, which are built like this:
 }
 ```
 The _name_ property will be printed as a h2 header-element.
-In the _pages_ array, the objects for the pages are stored. If _withLocations_ is true, the page objects need a value in the _location_ object.
+In the _pages_ array, the objects for the pages are stored. If _withLocations_ is true, the page objects _location_ value is needed. The timeout value defines how long to wait before marking a page as unavailable.
 ```js
 {
     "name":"Page Name",
     "url":"http://humanoids.be",
-    "location":"Switzerland"
+    "location":"Switzerland",
+    "timeout":5000
 }
 ```
 
@@ -49,7 +50,7 @@ Additionally, if the page provides a JSONP API to request it's status, you can s
 ```
 
 ## The JS Object
-For an example on how to make your dashboard work, see the [index.html](index.html) file.
+For an example on how to make your dashboard work, see the [index.html](example/index.html) file.
 
 ```js
   var dashboard = new Dashboard();
