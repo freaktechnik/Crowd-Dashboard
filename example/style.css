@@ -1,0 +1,84 @@
+body {
+	font-family: sans-serif;
+
+	background: #444;
+}
+
+h1, h2 {
+	font-weight: 200;
+}
+
+h1 {
+	font-size: 2.5em;
+}
+
+code {
+	display: block;
+	background: black;
+	color: white;
+	padding: 1em 3em;
+	margin: .5em 0;
+}
+
+code::before {
+	content: '$';
+}
+
+article {
+	max-width: 680px;
+	width: 100%;
+	margin: 0 auto;
+	padding: 1em;
+
+	background: white;
+	box-shadow: 0 0 1em #222;
+}
+
+p {
+	color: #121;
+}
+
+footer {
+	background: #444;
+	color: white;
+	width: 100%;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+
+	padding: .5em;
+}
+
+footer a:link, footer a, footer a:hover, footer a:visited {
+	color: #bbb;
+}
+
+#mirrors .dashboard-list, #mirrors .dashboard-list li {
+    float: right;
+}
+
+#mirrors, #mirrorsWrapper {
+    display: inline;
+}
+
+.dashborad-list, .dashboar-list li {
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.offline {
+    background-color: red;
+    color: white;
+}
+.offline a:link, .offline a:visited {
+    color: white;
+}
+
+.online {
+    // style for services that are alive
+}
+.hidden, #mirrors h2 {
+    visibility: hidden;
+    display: none;
+}
