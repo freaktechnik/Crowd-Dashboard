@@ -13,7 +13,8 @@
                 "name":"Git Repository",
                 "url":"http://github.com",
                 "location":"USA",
-                "hasStatusAPI":true
+                "hasStatusAPI":true,
+                "timeout":7000
             }
         ]
     },
