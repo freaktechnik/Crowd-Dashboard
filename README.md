@@ -40,9 +40,9 @@ In the _pages_ array, the objects for the pages are stored. If _withLocations_ i
 }
 ```
 
-Additionally, if the page provides a JSONP API to request it's status, you can set the _hasStatusAPI_ property to true. You most likely will have to define a _pageAPI_ object, the one shown in the example holds the default values, where page.host represents the host of the URL set in the page object.
+Additionally, if the page provides a JSONP API to request it's status, you can set the _hasStatusAPI_ property to true. You most likely will have to define a _statusAPI_ object, the one shown in the example holds the default values, where page.host represents the host of the URL set in the page object. If the property _upValue_ is present, it is prefered over the _downValue_. If the _propertyName_ contains one or more dots, it is assumed that it represents a structure of properties, allowing you to navigate through objects.
 ```js
-"pageAPI":{
+"statusAPI":{
     "url":"https://status.page.host/api/status.json",
     "propertyName":"status",
     "downValue":"major"
