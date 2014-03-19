@@ -190,10 +190,10 @@ Dashboard.prototype.checkServer = function(pageObj) {
         // set default values
         statusAPI.url = statusAPI.url || 'https://status.' + urlObj.host + '/api/status.json';
         statusAPI.propertyName = statusAPI.propertyName || "status";
-        statusAPI.nestedProperty = false
+        statusAPI.nestedProperty = statusAPI.nestedProperty | false;
         statusAPI.downValue = statusAPI.downValue || "major";
         
-        if(statusAPI.propertyName.indexOf(".") != -1) {
+        if(statusAPI.propertyName.indexOf(".") != -1 && !statusAPI.nestedProperty) {
             statusAPI.nestedProperty = true;
             statusAPI.propertyName = statusAPI.propertyName.split(".");
         }
@@ -201,8 +201,6 @@ Dashboard.prototype.checkServer = function(pageObj) {
         // timestamp to avoid caching
         var rand = (statusAPI.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now(),
             funcName = 'processStatusAPI' + jsizeURL(urlObj.host+rand);
-        
-        statusAPI.url += rand + '&callback=' + funcName;
         
         var script = document.createElement("script");
 
@@ -225,7 +223,7 @@ Dashboard.prototype.checkServer = function(pageObj) {
             delete window[funcName];
         }
             
-        script.src = statusAPI.url;
+        script.src = statusAPI.url + rand + '&callback=' + funcName;
         document.body.appendChild(script);
     }
 };

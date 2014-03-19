@@ -49,6 +49,20 @@ Additionally, if the page provides a JSONP API to request it's status, you can s
 }
 ```
 
+Alternatively to the dots you can use _nestedProperty_ (assumed as false by default) to declare that _propertyName_ is an array of property names to navigate through. Not only does this allow you to have dots in the property names, but you can also select items of traditional arrays.
+```js
+"statusAPI:{
+    "url":"http://status.page.host/api/status.json",
+    "nestedProperty": true,
+    "propertyName":[
+        "page",
+        0,
+        "status"
+    ],
+    "upValue":"online"
+}
+```
+
 ## The JS Object
 For an example on how to make your dashboard work, see the [index.html](example/index.html) file.
 
