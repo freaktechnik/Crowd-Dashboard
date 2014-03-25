@@ -169,11 +169,11 @@ global.Dashboard = function(servers, passive, elementId) {
     var passiveMode = false;
     Object.defineProperty(this, 'passiveMode', {
         set: function(val) {
-                if( typeof val == "boolean" ) {
-                    if(!passiveMode && val)
-                        that.printLists();
-
+                if( typeof val == "boolean" && passiveMode != val ) {
                     passiveMode = val;
+
+                    if(passiveMode)
+                        that.printLists();
                 }
             },
         get: function() {
@@ -189,6 +189,24 @@ Dashboard.prototype.supportedEvents = ['ready', 'empty', 'itemready'];
 /*
 // Methods
 */
+
+Dashboard.prototype.setListAttributes = function(id, connector, url) {
+    // the whole point of this method is to change multiple properties of the
+    // list without updating the DOM multiple times.
+    var prevVal = this.passiveMode;
+    this.passiveMode = false;
+
+    if(id != null)
+        this.targetNodeId = id;
+
+    if(connector != null)
+        this.locationConnector = connector;
+
+    if(url != null)
+        this.locationURL = url;
+
+    this.passiveMode = prevVal;
+};
 
 // checks the status of all servers.
 Dashboard.prototype.checkServers = function() {

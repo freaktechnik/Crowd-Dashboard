@@ -82,6 +82,15 @@ Basically the js API supplied by the [crowd-dashboard.js](crowd-dashboard.js) fi
 ##### Description
 Already tries to create the dashboard, if a valid servers list is given.
 
+#### setListAttributes
+##### Arguments
+   * [_targetNodeId_]: ID of the new target node
+   * [_locationConnector_]: new location connector
+   * [_locationURL_]: new location URL
+
+#####
+To avoid updating the DOM multiple times when setting new values to multiple of the three properties _targetNodeId_,_locationConnector_ and _locationURL_ you can set them using this method. If you vant to omit one of the first two arguments you may do so by passing '''null'''.
+
 #### checkServers
 Refreshes the the statuses of the servers and updates the printed list.
 
@@ -124,25 +133,25 @@ Number of servers to check. Defaults to 0.
 Number of checked servers. Defaults to -1.
 
 #### servers
-The servers list, with an additional _online_ attribute, if the server has been checked. Holds true, if the server is online.
+The servers list, with an additional _online_ attribute, if the server has been checked. Holds true, if the server is online. This updates the list if _passiveMode_ is false.
 
 #### locationConnector
-The string between the link to the page and the location link. Sanitized by the browser, so no html in there! Defaults to " in ".
+The string between the link to the page and the location link. Sanitized by the browser, so no html in there! Defaults to " in ". This updates the list if _passiveMode_ is false.
 
 #### locationURL
-The URL the location gets linked to. The location string is appended after this string. Defaults to "http://maps.google.com/?q=".
+The URL the location gets linked to. The location string is appended after this string. Defaults to "http://maps.google.com/?q=". This updates the list if _passiveMode_ is false.
 
 #### loadingString
-The string displayed inside the container while loading the dashboard. This currently isn't sanitized and just inserted into the _innerHTML_ property of the target element. Defaults to "Loading...".
+The string displayed inside the container while loading the dashboard. This currently isn't sanitized and just inserted into the _innerHTML_ property of the target element. Defaults to "Loading...". If the loading string is currently shown and _passiveMode_ is false, it is changed.
 
 #### targetNodeId
-The ID of the node the dashboard is output to.
+The ID of the node the dashboard is output to. This prints the list in the new node if _passiveMode_ is not true.
 
 #### supportedEvents
 An array of the events it supports.
 
 #### passiveMode
-Whether or not the script does not generate the DOM list, defaults to false.
+Whether or not the script does not generate the DOM list, defaults to false. If changed to true, the list is immediately output to the target node.
   
 ### Events
 Those won't work in IE. You can use the default _addEventListener_ and _removeEventListener_ methods to add and remove event listeners, however only the first two arguments will be processed. You can also add listeners by setting the _on[event]_ attribute.
