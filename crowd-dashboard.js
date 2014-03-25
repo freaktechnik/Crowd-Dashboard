@@ -16,6 +16,8 @@
    constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
 */
 global.Dashboard = function(servers, passive, elementId) {
+    this.clearLists();
+
     if( servers ) {
         this.servers = servers;
 
@@ -87,7 +89,7 @@ global.Dashboard = function(servers, passive, elementId) {
                     pServers = servers;
                     that.totalCount = 0;
                     pServers.forEach(function(serverList) {
-                        this.totalCount += serverList.pages.length;
+                        that.totalCount += serverList.pages.length;
                     }, that);
                     
                     // check if the lists actually contained pages
@@ -98,16 +100,10 @@ global.Dashboard = function(servers, passive, elementId) {
                             that.printLists();
                     }
                     else
-                    {
-                        pServers.length = 0;
-                        that.onempty();
-                    }
+                        that.clear();
                 }
-                else {
-                    pServers.length = 0;
-                    that.onempty();
-                }
-
+                else
+                    that.clear();
             },
         get: function() {
                 return pServers;
@@ -119,21 +115,76 @@ global.Dashboard = function(servers, passive, elementId) {
         set: function(val) {
                 if( typeof val == "string" ) {
                     elementId = val;
+                    if(!that.passiveMode)
+                        that.printLists();
                 }
             },
         get: function() {
                 return elementId;
             }
     });
+
+    var locationConnector = " in ";
+    Object.defineProperty(this, 'locationConnector', {
+        set: function(val) {
+                if( typeof val == "string" ) {
+                    locationConnector = val;
+                    if(!that.passiveMode)
+                        that.printLists();
+                }
+            },
+        get: function() {
+                return locationConnector;
+            }
+    });
+
+    var locationURL = "http://maps.google.com/?q=";
+    Object.defineProperty(this, 'locationURL', {
+        set: function(val) {
+                if( typeof val == "string" ) {
+                    locationURL = val;
+                    if(!that.passiveMode)
+                        that.printLists();
+                }
+            },
+        get: function() {
+                return locationURL;
+            }
+    });
+
+    var loadingString = "Loading...";
+    Object.defineProperty(this, 'loadingString', {
+        set: function(val) {
+                if( typeof val == "string" ) {
+                    loadingString = val;
+                    if(!that.passiveMode && that.servers.length == 0)
+                        that.clearLists();
+                }
+            },
+        get: function() {
+                return loadingString;
+            }
+    });
+
+    var passiveMode = false;
+    Object.defineProperty(this, 'passiveMode', {
+        set: function(val) {
+                if( typeof val == "boolean" ) {
+                    if(!passiveMode && val)
+                        that.printLists();
+
+                    passiveMode = val;
+                }
+            },
+        get: function() {
+                return passiveMode;
+            }
+    });
 }
 
 Dashboard.prototype.totalCount = 0;
 Dashboard.prototype.readyCount = -1;
-Dashboard.prototype.locationConnector = " in ";
-Dashboard.prototype.locationURL = "http://maps.google.com/?q=";
-Dashboard.prototype.loadingString = "Loading...";
 Dashboard.prototype.supportedEvents = ['ready', 'empty', 'itemready'];
-Dashboard.prototype.passiveMode = false;
 
 /*
 // Methods
@@ -152,6 +203,8 @@ Dashboard.prototype.checkServers = function() {
 
 // eventually use url as ID here too?
 Dashboard.prototype.checkServer = function(pageObj) {
+    pageObj.ready = false;
+
     if(pageObj.hasOwnProperty("hasStatusAPI") && pageObj.hasStatusAPI)
         getStatusAPI(pageObj.url, this.addServerToList, pageObj.statusAPI);
     else
@@ -252,6 +305,7 @@ Dashboard.prototype.addServerToList = function( url, online ) {
     var server = this.getServerByURL(url);
     if(server) {
         server.online = online;
+        server.ready = true;
         if(this.readyCount == -1)
             this.readyCount = 0;
         this.readyCount++;
@@ -344,6 +398,9 @@ Dashboard.prototype.printLists = function() {
                 link.appendChild(document.createTextNode(page.location));
                 item.appendChild(link);
             }
+
+            if(page.ready)
+                item.classList.add(page.online?"online":"offline");
 
             item.id = 'dashboard-item-'+jsizeURL(page.url);
 
