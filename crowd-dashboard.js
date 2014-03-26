@@ -471,7 +471,7 @@ Dashboard.prototype.clearLists = function() {
 
 // outputs the markup list
 Dashboard.prototype.printLists = function() {
-    if( this.servers.length > 0 ) {
+    if( this.servers.length == 0 ) {
         this.clearLists();
     }
     else {
