@@ -131,6 +131,7 @@ StatusCheck.prototype.XHRequest = function(callback, that) {
     }
     
     var xhr = new XMLHttpRequest(),
+        rand = (this.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now(),
         url = this.url;
 
     xhr.timeout = this.timeout;
@@ -138,7 +139,7 @@ StatusCheck.prototype.XHRequest = function(callback, that) {
         if( xhr.readyState == 4 )
             callback.call( that, url, xhr.status != 0 && xhr.status < 400 );
     };
-    xhr.open('GET', this.url);
+    xhr.open('GET', this.url + rand);
     xhr.send();
 };
 
@@ -150,14 +151,16 @@ StatusCheck.prototype.JSONRequest = function(callback, that) {
         throw new Error("Can't parse JSON");
     }
     
-    var xhr = new XMLHttpRequest();
+    var xhr = new XMLHttpRequest(),
+        rand = (this.statusAPI.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now();
+
 
     xhr.timeout = this.timeout;
     xhr.onreadystatechange = function() {
         if( xhr.readyState == 4 && xhr.status != 0 && xhr.status < 400 )
             thut.parseJSONResponse(JSON.parse(xhr.response), callback, that);
     };
-    xhr.open('GET', this.statusAPI.url);
+    xhr.open('GET', this.statusAPI.url + rand);
     xhr.send();
 };
 
