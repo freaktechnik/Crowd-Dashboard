@@ -217,7 +217,7 @@ global.Dashboard = function(servers, passive, elementId) {
     }
 
     // Events setup
-    this.eventListeners = {};
+    this.eventListeners = new Object();
 
 /*
 // Properties with getters & setters
@@ -479,7 +479,7 @@ Dashboard.prototype.clear = function() {
 Dashboard.prototype.clearLists = function() {
     // not too nice way to do it, but it does the job
     if(!this.passiveMode)
-        document.getElementById(this.targetNodeId).innerHTML = this.loadingString;
+        global.document.getElementById(this.targetNodeId).innerHTML = this.loadingString;
 };
 
 // outputs the markup list
