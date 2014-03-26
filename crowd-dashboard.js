@@ -201,21 +201,6 @@ StatusCheck.prototype.parseJSONResponse = function(response, callback, that) {
 global.Dashboard = function(servers, passive, elementId) {
     this.clearLists();
 
-    if( servers ) {
-        this.servers = servers;
-
-        if(!this.isReady()) {
-            this.checkServers();
-        }
-    }
-
-    if(passive != null)
-        this.passiveMode = passive;
-
-    if( elementId ) {
-        this.targetNodeId = elementId;
-    }
-
     // Events setup
     this.eventListeners = new Object();
 
@@ -263,7 +248,7 @@ global.Dashboard = function(servers, passive, elementId) {
             }
     });
 
-    var pServers = new Array();
+    var pServers = servers || new Array();
     Object.defineProperty(this, 'servers', {
         set: function(servers) {
                 if( typeof servers == "object" && servers.length > 0 ) {
@@ -293,7 +278,7 @@ global.Dashboard = function(servers, passive, elementId) {
             }
     });
 
-    var pElementId = "crowd-dashboard-status-list";
+    var pElementId = elementId || "crowd-dashboard-status-list";
     Object.defineProperty(this, 'targetNodeId', {
         set: function(val) {
                 if( typeof val == "string" ) {
@@ -349,7 +334,7 @@ global.Dashboard = function(servers, passive, elementId) {
             }
     });
 
-    var passiveMode = global.document == null;
+    var passiveMode = passive || global.document == null;
     Object.defineProperty(this, 'passiveMode', {
         set: function(val) {
                 if( typeof val == "boolean" && passiveMode != val ) {
