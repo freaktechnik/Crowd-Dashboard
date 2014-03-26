@@ -20,7 +20,9 @@
 
             var statusDashboard;
             window.onload = function() {
+                console.log("load");
                 statusDashboard = new Dashboard();
+                console.log("dash initted");
                 function loadDataForDashboard(fileURL,dashboard) {
                     var xhr = new XMLHttpRequest();
                     xhr.onreadystatechange = function() {
