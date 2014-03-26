@@ -400,7 +400,7 @@ Dashboard.prototype.checkServer = function(pageObj) {
         options = type == StatusCheck.JSONP ? pageOjb.statusAPI : pageObj.timeout;
     var statusObj = new StatusCheck( pageObj.url, type, options);
 
-    status.getStatus(this.addServerToList, this);
+    statusObj.getStatus(this.addServerToList, this);
 };
 
 // adds a server to the internal status list and updates markup of the server's list item
