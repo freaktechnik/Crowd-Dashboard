@@ -298,7 +298,7 @@ global.Dashboard = function(servers, passive, elementId) {
         set: function(val) {
                 if( typeof val == "string" ) {
                     elementId = val;
-                    if(!that.passiveMode0)
+                    if(!that.passiveMode)
                         that.printLists();
                 }
             },
