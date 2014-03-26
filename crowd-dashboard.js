@@ -526,6 +526,9 @@ Dashboard.prototype.printLists = function() {
 Dashboard.prototype.setListItemStatus = function(server) {
     if( this.servers.length > 0 && !this.passiveMode ) {
         var listItem = document.getElementById('dashboard-item-'+jsizeURL(server.url));
+        
+        if(!listItem)
+            this.printLists();
 
         if(server.online && !listItem.classList.contains('online')) {
             listItem.classList.add('online');
