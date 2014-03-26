@@ -199,8 +199,6 @@ StatusCheck.prototype.parseJSONResponse = function(response, callback, that) {
    constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
 */
 global.Dashboard = function(servers, passive, elementId) {
-    this.clearLists();
-
     // Events setup
     this.eventListeners = new Object();
 
@@ -352,6 +350,8 @@ global.Dashboard = function(servers, passive, elementId) {
                 return passiveMode;
             }
     });
+
+    this.clearLists();
 }
 
 Dashboard.prototype.totalCount = 0;
