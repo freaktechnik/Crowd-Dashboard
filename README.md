@@ -9,6 +9,8 @@ Crowd-Dashboard has been tested and is working in
    * Chrome 31
    * Internet Explorer 10
 
+It might work in non-browser JS environements. However it uses the Image object (Status Ping) as well as the (window.)document tree for certain functions (JSONP, Markup output).
+
 ## Mirroring
 As how the dashboard is set up in the repository, a similar one can be cloned by simply calling [fetch.php](example/fetch.php) with the correct arguments.
 To do so, call `fetch.php?source=urlToOtherDashboard/`. This will fetch the other dashboard's servers.json and the mirrors.json and expands the local mirrors list by the dashboard fetched from.
@@ -40,7 +42,7 @@ In the _pages_ array, the objects for the pages are stored. If _withLocations_ i
 }
 ```
 
-Additionally, if the page provides a JSONP API to request it's status, you can set the _hasStatusAPI_ property to true. You most likely will have to define a _statusAPI_ object, the one shown in the example holds the default values, where page.host represents the host of the URL set in the page object. If the property _upValue_ is present, it is prefered over the _downValue_. _upValue_ and _downValue_ can also be arrays. The property's value is then checked against each array item and has to match (_upValue_) or be different to (_downValue_) at least one in order for the site to be considered as online. If the _propertyName_ contains one or more dots, it is assumed that it represents a structure of properties, allowing you to navigate through objects.
+Additionally, if the page provides a JSONP API to request it's status, you can set the _hasStatusAPI_ property to true. You most likely will have to define a _statusAPI_ object, the one shown in the example holds the default values, where page.host represents the host of the URL set in the page object. If the property _upValue_ is present, it is prefered over the _downValue_. _upValue_ and _downValue_ can also be arrays. The property's value is then checked against each array item and has to match (_upValue_) or be different to (_downValue_) at least one in order for the site to be considered as online. If the _propertyName_ contains one or more dots, it is assumed that it represents a structure of properties, allowing you to navigate through objects. The JSONP Api function needs a document element in the global scope which offers a DOM API.
 ```js
 "statusAPI":{
     "url":"https://status.page.host/api/status.json",
@@ -151,7 +153,7 @@ The ID of the node the dashboard is output to. This prints the list in the new n
 An array of the events it supports.
 
 #### passiveMode
-Whether or not the script does not generate the DOM list, defaults to false. If changed to true, the list is immediately output to the target node.
+Whether or not the script does not generate the DOM list, defaults to false if the global scope has a document element. If changed to true, the list is immediately output to the target node.
   
 ### Events
 Those won't work in IE. You can use the default _addEventListener_ and _removeEventListener_ methods to add and remove event listeners, however only the first two arguments will be processed. You can also add listeners by setting the _on[event]_ attribute.

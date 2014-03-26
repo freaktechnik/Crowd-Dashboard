@@ -12,6 +12,189 @@
 "use strict";
 
 /*
+   StatusCheck helper object
+ */
+StatusCheck.CORS_WORKAROUND = 0;
+StatusCheck.JSONP = 1;
+StatusCheck.XHR = 2;
+StatusCheck.JSON = 3;
+
+
+StatusCheck.prototype.url = "";
+StatusCheck.prototype.statusAPI = {"propertyName":"status","nestedProperty":false,"downValue":"major"};
+StatusCheck.prototype.timeout = 5000;
+StatusCheck.prototype.type = StatusCheck.CORS_WORKAROUND;
+
+function StatusCheck(url, type, options) {
+    this.url = url;
+
+    if(type != null && typeof type == "number") {
+        this.type = type;
+        if(options != null) {
+            switch(type) {
+                case StatusCheck.JSON:
+                    this.timeout = options.timeout;
+                case StatusCheck.JSONP:
+                    this.statusAPI = options;
+                    break;
+                default:
+                    this.timeout = options;
+            }
+        }
+    }
+
+    if(type == StatusCheck.JSONP || type == StatusCheck.JSON) {
+        if(options == null) {
+            this.statusAPI.url = 'https://status.' + this.url.match(/:\/\/([a-z0-9\.:].*)/)[1] + '/api/status.json';
+        }
+
+        if(!this.statusAPI.hasOwnProperty("downValue")) {
+            this.statusAPI.downValue = "major";
+        }
+    
+        if(!this.statusAPI.nestedProperty && this.statusAPI.propertyName.indexOf(".") != -1) {
+            this.statusAPI.nestedProperty = true;
+            this.statusAPI.propertyName = this.statusAPI.propertyName.split(".");
+        }            
+    }
+}
+
+StatusCheck.prototype.getStatus = function(callback, that) {
+    switch(this.type) {
+        case StatusCheck.JSONP:
+            this.JSONPRequest(callback, that);
+            break;
+        case StatusCheck.XHR:
+            this.XHRequest(callback, that);
+            break;
+        case StatusCheck.JSON:
+            this.JSONRequest(callback, that);
+            break;
+        default:
+            this.workaroundRequest(callback, that);
+    }
+};
+
+StatusCheck.prototype.workaroundRequest = function(callback, that) {
+    if(!Image) {
+        throw new Error("No Image object in the global scope. Cannot perform CORS workaround status pings");
+    }
+    var img = new Image(),
+        done = false;
+
+    img.onload = function() {
+        callback.call( that, this.url, true );
+        done=true;
+    };
+    img.onerror = function(e) {
+        //x-origin/no image
+        callback.call( that, this.url, true );
+        done=true;
+    };
+
+    setTimeout(function() {
+        if(!done)
+            callback.call( that, this.url, false );
+    }, this.timeout);
+
+    var rand = (this.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now();
+    img.src = this.url+rand;
+};
+
+StatusCheck.prototype.JSONPRequest = function(callback, that) {
+    if(!global.document) {
+        throw new Error("No document element in the global scope");
+    }
+    
+    // timestamp to avoid caching
+    var rand = (this.statusAPI.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now(),
+        funcName = 'processStatusAPI' + jsizeURL(this.url.match(/:\/\/([a-z0-9\.:].*)/)[1]+rand);
+    
+    var script = global.document.createElement("script");
+
+    global[funcName] = function(response) {
+        global.document.body.removeChild(script);
+
+        this.parseJSONResponse(response, callback, that);
+
+        delete global[funcName];
+    }
+        
+    script.src = this.statusAPI.url + rand + '&callback=' + funcName;
+    global.document.body.appendChild(script);
+};
+
+StatusCheck.prototype.XHRequest = function(callback, that) {
+    if(!XMLHttpRequest) {
+        throw new Error("Can't make a request as the XHR object is not available");
+    }
+    
+    var xhr = new XMLHttpRequest(),
+        url = this.url;
+
+    xhr.timeout = this.timeout;
+    xhr.onreadystatechange = function() {
+        if( xhr.readyState == 4 )
+            callback.call( that, url, xhr.status != 0 && xhr.status < 400 );
+    };
+    xhr.open('GET', this.url);
+    xhr.send();
+};
+
+StatusCheck.prototype.JSONRequest = function(callback, that) {
+    if(!XMLHttpRequest) {
+        throw new Error("Can't make a request as the XHR object is not available");
+    }
+    if(!JSON) {
+        throw new Error("Can't parse JSON");
+    }
+    
+    var xhr = new XMLHttpRequest();
+
+    xhr.timeout = this.timeout;
+    xhr.onreadystatechange = function() {
+        if( xhr.readyState == 4 && xhr.status != 0 && xhr.status < 400 )
+            thut.parseJSONResponse(JSON.parse(xhr.response), callback, that);
+    };
+    xhr.open('GET', this.statusAPI.url);
+    xhr.send();
+};
+
+StatusCheck.prototype.parseJSONResponse = function(response, callback, that) {
+    var responseVal, result;
+    if(this.statusAPI.nestedProperty) {
+        responseVal = response;
+        this.statusAPI.propertyName.forEach(function(value) {
+            responseVal = responseVal[value];
+        });
+    }
+    else {
+        responseVal = response[this.statusAPI.propertyName];
+    }
+
+    if(this.statusAPI.upValue != null) {
+        if(typeof this.statusAPI.upValue == "string")
+            result = this.statusAPI.upValue == responseVal;
+        else
+            result = this.statusAPI.upValue.some(function(item) {
+                return item == responseVal;
+            });
+    }
+    else
+    {
+        if(typeof this.statusAPI.downValue == "string")
+            result = this.statusAPI.downValue != responseVal;
+        else
+            result = this.statusAPI.downValue.some(function(item) {
+                return item != responseVal;
+            });
+    }
+
+    callback.call( that, this.url, result );
+};
+
+
+/*
 // Constructor
    constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
 */
@@ -115,7 +298,7 @@ global.Dashboard = function(servers, passive, elementId) {
         set: function(val) {
                 if( typeof val == "string" ) {
                     elementId = val;
-                    if(!that.passiveMode)
+                    if(!that.passiveMode0)
                         that.printLists();
                 }
             },
@@ -129,7 +312,7 @@ global.Dashboard = function(servers, passive, elementId) {
         set: function(val) {
                 if( typeof val == "string" ) {
                     locationConnector = val;
-                    if(!that.passiveMode)
+                    if(!that.passiveMode && that.servers.length > 0)
                         that.printLists();
                 }
             },
@@ -143,7 +326,7 @@ global.Dashboard = function(servers, passive, elementId) {
         set: function(val) {
                 if( typeof val == "string" ) {
                     locationURL = val;
-                    if(!that.passiveMode)
+                    if(!that.passiveMode && that.servers.length > 0)
                         that.printLists();
                 }
             },
@@ -166,13 +349,17 @@ global.Dashboard = function(servers, passive, elementId) {
             }
     });
 
-    var passiveMode = false;
+    var passiveMode = global.document == null;
     Object.defineProperty(this, 'passiveMode', {
         set: function(val) {
                 if( typeof val == "boolean" && passiveMode != val ) {
+                    if(!val && !global.document) {
+                        throw new Error("No document element in the global scope");
+                    }  
+
                     passiveMode = val;
 
-                    if(passiveMode)
+                    if(!passiveMode && that.servers.length > 0)
                         that.printLists();
                 }
             },
@@ -223,97 +410,11 @@ Dashboard.prototype.checkServers = function() {
 Dashboard.prototype.checkServer = function(pageObj) {
     pageObj.ready = false;
 
-    if(pageObj.hasOwnProperty("hasStatusAPI") && pageObj.hasStatusAPI)
-        getStatusAPI(pageObj.url, this.addServerToList, pageObj.statusAPI);
-    else
-        getStatus(pageObj.url, this.addServerToList, pageObj.timeout);
+    var type = pageObj.hasOwnProperty("hasStatusAPI") && pageObj.hasStatusAPI ? StatusCheck.JSONP : StatusCheck.CORS_WORKAROUND,
+        options = type == StatusCheck.JSONP ? pageOjb.statusAPI : pageObj.timeout;
+    var statusObj = new StatusCheck( pageObj.url, type, options);
 
-    var that = this;
-    function getStatus(url, callback, timeout) {
-        timeout = timeout | 5000;
-        var img = new Image(),
-            done = false;
-
-        img.onload = function() {
-            callback.call( that, url, true );
-            done=true;
-        };
-        img.onerror = function(e) {
-            //x-origin/no image
-            callback.call( that, url, true );
-            done=true;
-        };
-
-        setTimeout(function() {
-            if(!done)
-                callback.call( that, url, false );
-        }, timeout);
-
-        var rand = (url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now();
-        img.src = url+rand;
-    }
-    
-    function getStatusAPI(url, callback, statusAPI) {
-        var urlObj = {"host":url.match(/:\/\/([a-z0-9\.:].*)/)[1]},
-    
-        statusAPI = statusAPI || {};
-
-        // set default values
-        statusAPI.url = statusAPI.url || 'https://status.' + urlObj.host + '/api/status.json';
-        statusAPI.propertyName = statusAPI.propertyName || "status";
-        statusAPI.nestedProperty = statusAPI.nestedProperty | false;
-        statusAPI.downValue = statusAPI.downValue || "major";
-        
-        if(statusAPI.propertyName.indexOf(".") != -1 && !statusAPI.nestedProperty) {
-            statusAPI.nestedProperty = true;
-            statusAPI.propertyName = statusAPI.propertyName.split(".");
-        }
-        
-        // timestamp to avoid caching
-        var rand = (statusAPI.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now(),
-            funcName = 'processStatusAPI' + jsizeURL(urlObj.host+rand);
-        
-        var script = document.createElement("script");
-
-        window[funcName] = function(response) {
-            document.body.removeChild(script);
-
-            var responseVal, result;
-            if(statusAPI.nestedProperty) {
-                responseVal = response;
-                statusAPI.propertyName.forEach(function(value) {
-                    responseVal = responseVal[value];
-                });
-            }
-            else {
-                responseVal = response[statusAPI.propertyName];
-            }
-
-            if(statusAPI.upValue != null) {
-                if(typeof statusAPI.upValue == "string")
-                    result = statusAOI.upValue == responseVal;
-                else
-                    result = statusAPI.upValue.some(function(item) {
-                        return item == responseVal;
-                    });
-            }
-            else
-            {
-                if(typeof statusAPI.downValue == "string")
-                    result = statusAPI.downValue != responseVal;
-                else
-                    result = statusAPI.downValue.some(function(item) {
-                        return item != responseVal;
-                    });
-            }
-
-            callback.call( that, url, result );
-            delete window[funcName];
-        }
-            
-        script.src = statusAPI.url + rand + '&callback=' + funcName;
-        document.body.appendChild(script);
-    }
+    status.getStatus(this.addServerToList, this);
 };
 
 // adds a server to the internal status list and updates markup of the server's list item
@@ -383,63 +484,70 @@ Dashboard.prototype.clearLists = function() {
 
 // outputs the markup list
 Dashboard.prototype.printLists = function() {
-    var root = document.getElementById(this.targetNodeId);
-    var heading, list, item, link;
+    if( this.servers.length > 0 ) {
+        this.clearLists();
+    }
+    else {
+        var root = document.getElementById(this.targetNodeId);
+        var heading, list, item, link;
 
-    // clear root node
-    root.innerHTML = '';
+        // clear root node
+        root.innerHTML = '';
 
-    this.servers.forEach(function(serverList) {
-        heading = document.createElement('h2');
-        heading.classList.add('dashboard-title');
-        heading.appendChild(document.createTextNode(serverList.name));
+        this.servers.forEach(function(serverList) {
+            heading = document.createElement('h2');
+            heading.classList.add('dashboard-title');
+            heading.appendChild(document.createTextNode(serverList.name));
 
-        list = document.createElement('ul');
-        list.classList.add('dashboard-list');
+            list = document.createElement('ul');
+            list.classList.add('dashboard-list');
 
-        if(serverList.withLocations)
-            list.classList.add('dashboard-with-locations');
+            if(serverList.withLocations)
+                list.classList.add('dashboard-with-locations');
 
-        serverList.pages.forEach(function(page,i) {
-            item = document.createElement('li');
+            serverList.pages.forEach(function(page,i) {
+                item = document.createElement('li');
 
-            link = document.createElement('a');
-            link.href = page.url;
-            link.appendChild(document.createTextNode(page.name));
-            item.appendChild(link);
-
-            if(serverList.withLocations) {
-                item.appendChild(document.createTextNode(this.locationConnector));
                 link = document.createElement('a');
-                link.classList.add('dashboard-location');
-                link.href = this.locationURL + page.location;
-                link.appendChild(document.createTextNode(page.location));
+                link.href = page.url;
+                link.appendChild(document.createTextNode(page.name));
                 item.appendChild(link);
-            }
 
-            if(page.ready)
-                item.classList.add(page.online?"online":"offline");
+                if(serverList.withLocations) {
+                    item.appendChild(document.createTextNode(this.locationConnector));
+                    link = document.createElement('a');
+                    link.classList.add('dashboard-location');
+                    link.href = this.locationURL + page.location;
+                    link.appendChild(document.createTextNode(page.location));
+                    item.appendChild(link);
+                }
 
-            item.id = 'dashboard-item-'+jsizeURL(page.url);
+                if(page.ready)
+                    item.classList.add(page.online?"online":"offline");
 
-            list.appendChild(item);
+                item.id = 'dashboard-item-'+jsizeURL(page.url);
+
+                list.appendChild(item);
+            }, this);
+            root.appendChild(heading);
+            root.appendChild(list);
         }, this);
-        root.appendChild(heading);
-        root.appendChild(list);
-    }, this);
+    }
 };
 
 // Updates a server's list item status (online/offline)
 Dashboard.prototype.setListItemStatus = function(server) {
-    var listItem = document.getElementById('dashboard-item-'+jsizeURL(server.url));
+    if( this.servers.length > 0 && !this.passiveMode ) {
+        var listItem = document.getElementById('dashboard-item-'+jsizeURL(server.url));
 
-    if(server.online && !listItem.classList.contains('online')) {
-        listItem.classList.add('online');
-        listItem.classList.remove('offline');
-    }
-    else if(!server.online && !listItem.classList.contains('offline')) {
-        listItem.classList.add('offline');
-        listItem.classList.remove('online');
+        if(server.online && !listItem.classList.contains('online')) {
+            listItem.classList.add('online');
+            listItem.classList.remove('offline');
+        }
+        else if(!server.online && !listItem.classList.contains('offline')) {
+            listItem.classList.add('offline');
+            listItem.classList.remove('online');
+        }
     }
 };
 
@@ -479,7 +587,7 @@ Dashboard.prototype.dispatchEvent = function(d_eventObject) {
 };
 
 function jsizeURL(url) {
-    return window.btoa(encodeURI(url)).replace(/[\/=]+/g,'');
+    return global.btoa(encodeURI(url)).replace(/[\/=]+/g,'');
 }
 
 }(this));
