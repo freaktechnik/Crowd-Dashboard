@@ -112,11 +112,11 @@ StatusCheck.prototype.JSONPRequest = function(callback, that) {
     
     var script = global.document.createElement("script");
 
-    var parseJSONResponse = this.parseJSONResponse;
+    var thut = this;
     global[funcName] = function(response) {
         global.document.body.removeChild(script);
 
-        parseJSONResponse(response, callback, that);
+        thut.parseJSONResponse(response, callback, that);
 
         delete global[funcName];
     }
