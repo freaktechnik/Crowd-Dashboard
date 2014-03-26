@@ -351,7 +351,8 @@ global.Dashboard = function(servers, passive, elementId) {
             }
     });
 
-    this.clearLists();
+    if(!passiveMode && document.readyState != "loading")
+        this.clearLists();
 }
 
 Dashboard.prototype.totalCount = 0;

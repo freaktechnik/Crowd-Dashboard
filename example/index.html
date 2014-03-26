@@ -18,8 +18,9 @@
         <script type="text/javascript">
             "use strict";
 
-            var statusDashboard = new Dashboard();
+            var statusDashboard;
             window.onload = function() {
+                statusDashboard = new Dashboard();
                 function loadDataForDashboard(fileURL,dashboard) {
                     var xhr = new XMLHttpRequest();
                     xhr.onreadystatechange = function() {
