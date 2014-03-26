@@ -397,7 +397,7 @@ Dashboard.prototype.checkServer = function(pageObj) {
     pageObj.ready = false;
 
     var type = pageObj.hasOwnProperty("hasStatusAPI") && pageObj.hasStatusAPI ? StatusCheck.JSONP : StatusCheck.CORS_WORKAROUND,
-        options = type == StatusCheck.JSONP ? pageOjb.statusAPI : pageObj.timeout;
+        options = type == StatusCheck.JSONP ? pageObj.statusAPI : pageObj.timeout;
     var statusObj = new StatusCheck( pageObj.url, type, options);
 
     statusObj.getStatus(this.addServerToList, this);
