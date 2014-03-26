@@ -204,16 +204,16 @@ global.Dashboard = function(servers, passive, elementId) {
     if( servers ) {
         this.servers = servers;
 
-        if(passive != null)
-            this.passiveMode = passive;
-
-        if( elementId ) {
-            this.targetNodeId = elementId;
-        }
-
         if(!this.isReady()) {
             this.checkServers();
         }
+    }
+
+    if(passive != null)
+        this.passiveMode = passive;
+
+    if( elementId ) {
+        this.targetNodeId = elementId;
     }
 
     // Events setup

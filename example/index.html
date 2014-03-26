@@ -18,7 +18,7 @@
         <script type="text/javascript">
             "use strict";
 
-            var statusDashboard;
+            var statusDashboard = new Dashboard();
             window.onload = function() {
                 function loadDataForDashboard(fileURL,dashboard) {
                     var xhr = new XMLHttpRequest();
@@ -33,12 +33,10 @@
                     xhr.send();
                 }
 
-                statusDashboard = new Dashboard();
                 loadDataForDashboard("json/servers.json",statusDashboard);
 
                 // set up the mirrors list
-                var mirrorsDashboard = new Dashboard();
-                mirrorsDashboard.targetNodeId = 'mirrors';
+                var mirrorsDashboard = new Dashboard(null, null, 'mirrors');
                 mirrorsDashboard.addEventListener('empty',function(event) {
                     document.getElementById('mirrorsWrapper').classList.add('hidden');
                 });
