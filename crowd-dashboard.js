@@ -293,17 +293,17 @@ global.Dashboard = function(servers, passive, elementId) {
             }
     });
 
-    var elementId = "crowd-dashboard-status-list";
+    var pElementId = "crowd-dashboard-status-list";
     Object.defineProperty(this, 'targetNodeId', {
         set: function(val) {
                 if( typeof val == "string" ) {
-                    elementId = val;
+                    pElementId = val;
                     if(!that.passiveMode)
                         that.printLists();
                 }
             },
         get: function() {
-                return elementId;
+                return pElementId;
             }
     });
 
@@ -479,7 +479,7 @@ Dashboard.prototype.clear = function() {
 Dashboard.prototype.clearLists = function() {
     // not too nice way to do it, but it does the job
     if(!this.passiveMode)
-        global.document.getElementById(this.targetNodeId).innerHTML = this.loadingString;
+        document.getElementById(this.targetNodeId).innerHTML = this.loadingString;
 };
 
 // outputs the markup list
