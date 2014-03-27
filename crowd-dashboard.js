@@ -139,6 +139,9 @@ StatusCheck.prototype.XHRequest = function(callback, that) {
         if( xhr.readyState == 4 )
             callback.call( that, url, xhr.status != 0 && xhr.status < 400 );
     };
+    xhr.ontimeout = function() {
+        callback.call(that, thut.url, false);
+    };
     xhr.open('GET', this.url + rand);
     xhr.send();
 };
@@ -159,6 +162,9 @@ StatusCheck.prototype.JSONRequest = function(callback, that) {
     xhr.onreadystatechange = function() {
         if( xhr.readyState == 4 && xhr.status != 0 && xhr.status < 400 )
             thut.parseJSONResponse(JSON.parse(xhr.response), callback, that);
+    };
+    xhr.ontimeout = function() {
+        callback.call(that, thut.url, false);
     };
     xhr.open('GET', this.statusAPI.url + rand);
     xhr.send();
