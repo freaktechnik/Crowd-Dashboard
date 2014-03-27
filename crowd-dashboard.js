@@ -140,7 +140,7 @@ StatusCheck.prototype.XHRequest = function(callback, that) {
             callback.call( that, url, xhr.status != 0 && xhr.status < 400 );
     };
     xhr.ontimeout = function() {
-        callback.call(that, thut.url, false);
+        callback.call(that, url, false);
     };
     xhr.open('GET', this.url + rand);
     xhr.send();
@@ -155,8 +155,8 @@ StatusCheck.prototype.JSONRequest = function(callback, that) {
     }
     
     var xhr = new XMLHttpRequest(),
-        rand = (this.statusAPI.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now();
-
+        rand = (this.statusAPI.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now(),
+        thut = this;
 
     xhr.timeout = this.timeout;
     xhr.onreadystatechange = function() {
