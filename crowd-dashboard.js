@@ -194,8 +194,7 @@ StatusCheck.prototype.parseJSONResponse = function(response, callback, that) {
                 return item == responseVal;
             });
     }
-    else
-    {
+    else {
         if(typeof this.statusAPI.downValue == "string")
             result = this.statusAPI.downValue != responseVal;
         else
