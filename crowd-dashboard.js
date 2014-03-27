@@ -409,11 +409,25 @@ Dashboard.prototype.checkServers = function() {
 Dashboard.prototype.checkServer = function(pageObj) {
     pageObj.ready = false;
 
-    var type = pageObj.hasOwnProperty("hasStatusAPI") && pageObj.hasStatusAPI ? StatusCheck.JSONP : StatusCheck.CORS_WORKAROUND,
-        options = type == StatusCheck.JSONP ? pageObj.statusAPI : pageObj.timeout;
-    var statusObj = new StatusCheck( pageObj.url, type, options);
+    pageObj.type = pageObj.type || "workaround";
+    var options = pageObj.type == "workaround" || pageObj.type == "request" ? pageObj.timeout : pageObj.statusAPI;
+    var statusObj = new StatusCheck( pageObj.url, this.getStatusCheckType(pageObj.type), options);
 
     statusObj.getStatus(this.addServerToList, this);
+};
+
+
+Dashboard.prototype.getStatusCheckType = function(string) {
+    switch(string) {
+        case "JSONP":
+            return StatusCheck.JSONP;
+        case "request":
+            return StatusCheck.XHR;
+        case "JSON":
+            return StatusCheck.JSON;
+        default:
+            return StatusCheck.CORS_WORKAROUND;
+    }
 };
 
 // adds a server to the internal status list and updates markup of the server's list item

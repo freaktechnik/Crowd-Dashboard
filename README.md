@@ -32,17 +32,18 @@ The array contains server groups, which are built like this:
 }
 ```
 The _name_ property will be printed as a h2 header-element.
-In the _pages_ array, the objects for the pages are stored. If _withLocations_ is true, the page objects _location_ value is needed. The timeout value defines how long to wait (in ms) before marking a page as unavailable. Currently the url is  treated as unique identifier.
+In the _pages_ array, the objects for the pages are stored. If _withLocations_ is true, the page objects _location_ value is needed. They _type_ property defines how the status is checked. Crowd-Dashboard currently supports "workaround" (Default) for status checks of non-CORS pages, "request" to check the status via XMLHttpRequest (needs the header of the page to specify the proper CORS access), "JSON" and "JSONP" for status APIs. The _timeout_ value defines how long to wait (in ms) before marking a page as unavailable This works for each type except JSONP. Currently the url is  treated as unique identifier.
 ```js
 {
     "name":"Page Name",
     "url":"http://humanoids.be",
     "location":"Switzerland",
-    "timeout":5000
+    "timeout":5000,
+    "type":"workaround"
 }
 ```
 
-Additionally, if the page provides a JSONP API to request it's status, you can set the _hasStatusAPI_ property to true. You most likely will have to define a _statusAPI_ object, the one shown in the example holds the default values, where page.host represents the host of the URL set in the page object. If the property _upValue_ is present, it is prefered over the _downValue_. _upValue_ and _downValue_ can also be arrays. The property's value is then checked against each array item and has to match (_upValue_) or be different to (_downValue_) at least one in order for the site to be considered as online. If the _propertyName_ contains one or more dots, it is assumed that it represents a structure of properties, allowing you to navigate through objects. The JSONP Api function needs a document element in the global scope which offers a DOM API.
+Additionally, if the page provides a JSON(P) API to request it's status, you can set the _type_ property to "JSON" or "JSONP" respectively. You most likely will have to define a _statusAPI_ object, the one shown in the example holds the default values, where page.host represents the host of the URL set in the page object. If the property _upValue_ is present, it is prefered over the _downValue_. _upValue_ and _downValue_ can also be arrays. The property's value is then checked against each array item and has to match (_upValue_) or be different to (_downValue_) at least one in order for the site to be considered as online. If the _propertyName_ contains one or more dots, it is assumed that it represents a structure of properties, allowing you to navigate through objects. The JSONP Api function needs a document element in the global scope which offers a DOM API.
 ```js
 "statusAPI":{
     "url":"https://status.page.host/api/status.json",
