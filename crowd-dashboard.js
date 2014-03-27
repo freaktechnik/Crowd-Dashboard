@@ -150,9 +150,6 @@ StatusCheck.prototype.JSONRequest = function(callback, that) {
     if(!XMLHttpRequest) {
         throw new Error("Can't make a request as the XHR object is not available");
     }
-    if(!JSON) {
-        throw new Error("Can't parse JSON");
-    }
     
     var xhr = new XMLHttpRequest(),
         rand = (this.statusAPI.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now(),
@@ -160,8 +157,15 @@ StatusCheck.prototype.JSONRequest = function(callback, that) {
 
     xhr.timeout = this.timeout;
     xhr.onreadystatechange = function() {
-        if( xhr.readyState == 4 && xhr.status != 0 && xhr.status < 400 )
-            thut.parseJSONResponse(JSON.parse(xhr.response), callback, that);
+        if( xhr.readyState == 4 && xhr.status != 0 && xhr.status < 400 ) {
+            if(xhr.responseType != "json") {
+                if(!JSON) {
+                    throw new Error("Can't parse JSON");
+                }
+                xhr.response = JSON.parse(xhr.response);
+            }
+            thut.parseJSONResponse(xhr.response, callback, that);
+        }
     };
     xhr.ontimeout = function() {
         callback.call(that, thut.url, false);
