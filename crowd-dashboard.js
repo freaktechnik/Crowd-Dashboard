@@ -3,7 +3,7 @@
  *  Created by Martin Giger in 2014
  *  Licensed under GPLv2
  *  Visit the GitHub project: http://freaktechnik.github.io/Crowd-Dashboard
- *  Version 1.3.0
+ *  Version 1.4.0
  *  
  *  Credits for the status ping image hack idea to (even tough this might not be the original source): http://jsfiddle.net/Maslow/GSSCD/
  */
@@ -114,12 +114,12 @@ StatusCheck.prototype.JSONPRequest = function(callback, that) {
     var script = global.document.createElement("script");
 
     var thut = this;
-    global[funcName] = function(response) {
+    this[funcName] = function(response) {
         global.document.body.removeChild(script);
 
         thut.parseJSONResponse(response, callback, that);
 
-        delete global[funcName];
+        delete thut[funcName];
     }
         
     script.src = this.statusAPI.url + rand + '&callback=' + funcName;
@@ -462,15 +462,16 @@ Dashboard.prototype.addServerToList = function( url, online ) {
     }
 };
 
-// make this more efficient than O(n*n)
 Dashboard.prototype.getServerByURL = function(url) {
-    var servObj= false;
+    var servObj = false;
 
-    this.servers.forEach(function(serverList) {
-        serverList.pages.forEach(function(server) {
+    this.servers.some(function(serverList) {
+        return serverList.pages.some(function(server) {
             if(server.url == url) {
                 servObj = server;
-            }            
+                return true;
+            }
+            return false;
         }, this);
     }, this);
 
