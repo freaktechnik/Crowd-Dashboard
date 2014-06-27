@@ -215,7 +215,7 @@ StatusCheck.prototype.parseJSONResponse = function(response, callback, that) {
 // Constructor
    constructs the dashboard, checks the servers if a server array is passed. The second argument allows the Dashboard to be output to a specific element.
 */
-global.Dashboard = function(servers, passive, elementId) {
+global.Dashboard = function(servers, options) {
     // Events setup
     this.eventListeners = new Object();
 
@@ -293,10 +293,10 @@ global.Dashboard = function(servers, passive, elementId) {
             }
     });
 
-    var pElementId = elementId || "crowd-dashboard-status-list";
+    var pElementId = options.targetNodeId || "crowd-dashboard-status-list";
     Object.defineProperty(this, 'targetNodeId', {
         set: function(val) {
-                if( typeof val == "string" ) {
+                if( typeof val == "string" && val.length > 0 ) {
                     pElementId = val;
                     if(!that.passiveMode)
                         that.printLists();
@@ -307,7 +307,7 @@ global.Dashboard = function(servers, passive, elementId) {
             }
     });
 
-    var locationConnector = " in ";
+    var locationConnector = options.locationConnector || " in ";
     Object.defineProperty(this, 'locationConnector', {
         set: function(val) {
                 if( typeof val == "string" ) {
@@ -321,7 +321,7 @@ global.Dashboard = function(servers, passive, elementId) {
             }
     });
 
-    var locationURL = "http://maps.google.com/?q=";
+    var locationURL = options.locationURL || "http://maps.google.com/?q=";
     Object.defineProperty(this, 'locationURL', {
         set: function(val) {
                 if( typeof val == "string" ) {
@@ -335,7 +335,7 @@ global.Dashboard = function(servers, passive, elementId) {
             }
     });
 
-    var loadingString = "Loading...";
+    var loadingString = options.loadingString || "Loading...";
     Object.defineProperty(this, 'loadingString', {
         set: function(val) {
                 if( typeof val == "string" ) {
@@ -349,7 +349,7 @@ global.Dashboard = function(servers, passive, elementId) {
             }
     });
 
-    var passiveMode = passive || global.document == null;
+    var passiveMode = options.passiveMode || global.document == null;
     Object.defineProperty(this, 'passiveMode', {
         set: function(val) {
                 if( typeof val == "boolean" && passiveMode != val ) {

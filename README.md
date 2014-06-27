@@ -79,8 +79,7 @@ Basically the js API supplied by the [crowd-dashboard.js](crowd-dashboard.js) fi
 #### Constructor
 ##### Arguments
    * [_servers_]: JSON server list
-   * [_passiveMode_]: false for generation of DOM list
-   * [_elementId_]: id of the element the dashboard should be printed into
+   * [_options_]: Object containing the initial values of the dashboards properties. Undefined properties get initialized with their default value.
    
 ##### Description
 Already tries to create the dashboard, if a valid servers list is given.
