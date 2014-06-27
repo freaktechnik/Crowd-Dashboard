@@ -28,9 +28,9 @@ StatusCheck.prototype.type = StatusCheck.CORS_WORKAROUND;
 function StatusCheck(url, type, options) {
     this.url = url;
 
-    if(type != null && typeof type == "number") {
+    if(type && typeof type == "number") {
         this.type = type;
-        if(options != null) {
+        if(options) {
             switch(type) {
                 case StatusCheck.JSON:
                     this.timeout = options.timeout || this.timeout;
@@ -38,7 +38,7 @@ function StatusCheck(url, type, options) {
                     this.statusAPI = options;
                     break;
                 default:
-                    this.timeout = options || this.timeout;
+                    this.timeout = options;
             }
         }
     }
@@ -80,21 +80,22 @@ StatusCheck.prototype.workaroundRequest = function(callback, that) {
         throw new Error("No Image object in the global scope. Cannot perform CORS workaround status pings");
     }
     var img = new global.Image(),
-        done = false;
+        done = false,
+        url = this.url;
 
     img.onload = function() {
-        callback.call( that, this.url, true );
+        callback.call( that, url, true );
         done=true;
     };
     img.onerror = function(e) {
         //x-origin/no image
-        callback.call( that, this.url, true );
+        callback.call( that, url, true );
         done=true;
     };
 
     setTimeout(function() {
         if(!done)
-            callback.call( that, this.url, false );
+            callback.call( that, url, false );
     }, this.timeout);
 
     var rand = (this.url.indexOf('?')>-1?'&':'?')+'timestamp='+Date.now();
