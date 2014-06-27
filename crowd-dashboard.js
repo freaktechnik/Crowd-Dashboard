@@ -33,18 +33,18 @@ function StatusCheck(url, type, options) {
         if(options != null) {
             switch(type) {
                 case StatusCheck.JSON:
-                    this.timeout = options.timeout;
+                    this.timeout = options.timeout || this.timeout;
                 case StatusCheck.JSONP:
                     this.statusAPI = options;
                     break;
                 default:
-                    this.timeout = options;
+                    this.timeout = options || this.timeout;
             }
         }
     }
 
     if(type == StatusCheck.JSONP || type == StatusCheck.JSON) {
-        if(options == null) {
+        if(!options) {
             this.statusAPI.url = 'https://status.' + this.url.match(/:\/\/([a-z0-9\.:].*)/)[1] + '/api/status.json';
         }
 
@@ -52,7 +52,7 @@ function StatusCheck(url, type, options) {
             this.statusAPI.downValue = "major";
         }
     
-        if(!this.statusAPI.nestedProperty && this.statusAPI.propertyName.indexOf(".") != -1) {
+        if(!this.statusAPI.nestedProperty && this.statusAPI.propertyName.indexOf(".") > -1) {
             this.statusAPI.nestedProperty = true;
             this.statusAPI.propertyName = this.statusAPI.propertyName.split(".");
         }            
@@ -76,10 +76,10 @@ StatusCheck.prototype.getStatus = function(callback, that) {
 };
 
 StatusCheck.prototype.workaroundRequest = function(callback, that) {
-    if(!Image) {
+    if(!global.Image) {
         throw new Error("No Image object in the global scope. Cannot perform CORS workaround status pings");
     }
-    var img = new Image(),
+    var img = new global.Image(),
         done = false;
 
     img.onload = function() {
@@ -97,7 +97,7 @@ StatusCheck.prototype.workaroundRequest = function(callback, that) {
             callback.call( that, this.url, false );
     }, this.timeout);
 
-    var rand = (this.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now();
+    var rand = (this.url.indexOf('?')>-1?'&':'?')+'timestamp='+Date.now();
     img.src = this.url+rand;
 };
 
@@ -126,11 +126,11 @@ StatusCheck.prototype.JSONPRequest = function(callback, that) {
 };
 
 StatusCheck.prototype.XHRequest = function(callback, that) {
-    if(!XMLHttpRequest) {
+    if(!global.XMLHttpRequest) {
         throw new Error("Can't make a request as the XHR object is not available");
     }
     
-    var xhr = new XMLHttpRequest(),
+    var xhr = new global.XMLHttpRequest(),
         rand = (this.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now(),
         url = this.url;
 
@@ -147,11 +147,11 @@ StatusCheck.prototype.XHRequest = function(callback, that) {
 };
 
 StatusCheck.prototype.JSONRequest = function(callback, that) {
-    if(!XMLHttpRequest) {
+    if(!global.XMLHttpRequest) {
         throw new Error("Can't make a request as the XHR object is not available");
     }
     
-    var xhr = new XMLHttpRequest(),
+    var xhr = new global.XMLHttpRequest(),
         rand = (this.statusAPI.url.indexOf('?')!=-1?'&':'?')+'timestamp='+Date.now(),
         thut = this,
         response;
@@ -413,7 +413,10 @@ Dashboard.prototype.checkServer = function(pageObj) {
     pageObj.ready = false;
 
     pageObj.type = pageObj.type || "workaround";
-    var options = pageObj.type == "workaround" || pageObj.type == "request" ? pageObj.timeout : pageObj.statusAPI;
+    var canHaveStatusAPI = pageObj.type != "workaround" && pageObj.type != "request";
+    var options = !canHaveStatusAPI ? pageObj.timeout : pageObj.statusAPI;
+    if(canHaveStatusAPI && pageObj.hasOwnProperty("timeout"))
+        options.timeout = pageObj.timeout;
     var statusObj = new StatusCheck( pageObj.url, this.getStatusCheckType(pageObj.type), options);
 
     statusObj.getStatus(this.addServerToList, this);
