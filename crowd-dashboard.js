@@ -384,7 +384,7 @@ Dashboard.prototype.setListAttributes = function(id, connector, url) {
     // the whole point of this method is to change multiple properties of the
     // list without updating the DOM multiple times.
     var prevVal = this.passiveMode;
-    this.passiveMode = false;
+    this.passiveMode = true;
 
     if(id != null)
         this.targetNodeId = id;
