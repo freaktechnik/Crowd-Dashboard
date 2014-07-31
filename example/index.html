@@ -37,7 +37,7 @@
                 loadDataForDashboard("json/servers.json",statusDashboard);
 
                 // set up the mirrors list
-                var mirrorsDashboard = new Dashboard(null, null, 'mirrors');
+                var mirrorsDashboard = new Dashboard(null, {targetNodeId: 'mirrors'});
                 mirrorsDashboard.addEventListener('empty',function(event) {
                     document.getElementById('mirrorsWrapper').classList.add('hidden');
                 });
