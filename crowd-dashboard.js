@@ -224,6 +224,7 @@ global.Dashboard = function(servers, options) {
 */
     
     var that = this;
+    options = options | {};
 
     // make this automated with the supported Events list
     Object.defineProperty(this, 'onready', {
